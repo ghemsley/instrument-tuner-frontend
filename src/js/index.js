@@ -85,6 +85,16 @@ const displayTuning = (tuning, name = '') => {
   return notes
 }
 
+const displayTunings = (tunings) => {
+  if (typeof tunings !== 'undefined') {
+    for (const tuning of tunings) {
+      displayTuning(tuning)
+    }
+    return tunings
+  }
+  return []
+}
+
 const startAndDisplayTuner = (stoppedTuner, interval) => {
   return stoppedTuner
     .startTuner()
