@@ -37,11 +37,24 @@ const showTuningForm = () => {
   tuningFormSelect.id = 'tuning-form-select'
   tuningFormSubmit.id = 'tuning-form-submit'
   tuningFormSubmit.type = 'submit'
-  // tuningFormSelect.addEventListener('change', updateTuning)
-  // tuningForm.addEventListener('submit', updateTuning)
+  tuningFormSelect.addEventListener('change', updateTuning)
+  tuningForm.addEventListener('submit', updateTuning)
   tuningForm.appendChild(tuningFormSelect)
   tuningForm.appendChild(tuningFormSubmit)
   document.body.appendChild(tuningForm)
+}
+
+const populateTuningForm = (instrument) => {
+  const tunings = instrument.included
+  for (const tuning of tunings) {
+    const option = document.createElement('option')
+    const string = `${tuning.attributes.name}: ${tuning.attributes.notes.join(
+      ', '
+    )}`
+    option.value = string
+    option.text = string
+    tuningFormSelect().appendChild(option)
+  }
 }
 
 const displayTuning = (tuning, name = '') => {
