@@ -14,6 +14,15 @@ const tuningFormSubmit = () => document.getElementById('tuning-form-submit')
 let matchNotesInterval
 let tuner
 
+document.addEventListener('DOMContentLoaded', (event) => {
+  getInstrument(1)
+    .then((instrument) => displayInstrument(instrument))
+    .then((instrument) => {
+      showTuningForm()
+      populateTuningForm(instrument)
+    })
+})
+
 const fetchData = (route) => {
   return fetch(BASE_URL + route, {
     headers: { Accept: 'application/json' }
