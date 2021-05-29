@@ -101,3 +101,22 @@ const highlightMatchingNotes = (startedTuner, notes, interval) => {
   }, interval)
   return tuner
 }
+
+const updateTuning = (event) => {
+  event.preventDefault()
+  const tuningPair =
+    typeof event.target.value === 'undefined'
+      ? event.target.children[0].value.split(': ')
+      : event.target.value.split(': ')
+  const tuningName = tuningPair[0]
+  const tuning = tuningPair[1]
+  displayTuning(tuning, tuningName)
+  tuningNameH3().textContent = tuningName
+  tuningNotesH4().textContent = tuning
+  createTuner()
+    .then((stoppedTuner) => startAndDisplayTuner(stoppedTuner, 100))
+    .then((startedTuner) =>
+      highlightMatchingNotes(startedTuner, tuning.split(', '), 100)
+    )
+    .then((tuner) => tuner.drawGuage())
+}
