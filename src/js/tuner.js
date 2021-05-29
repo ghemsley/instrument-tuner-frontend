@@ -134,6 +134,15 @@ class Tuner {
       }
     })
   }
+
+  matchNotes(notesArray) {
+    for (const note of notesArray) {
+      if (note.toLowerCase() === this.currentNote) {
+        return true
+      }
+    }
+    return false
+  }
 }
 
 export default Tuner
