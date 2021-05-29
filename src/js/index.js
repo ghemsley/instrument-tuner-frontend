@@ -57,3 +57,20 @@ const displayTuning = (tuning, name = '') => {
   }
   return notes
 }
+
+const startAndDisplayTuner = (stoppedTuner, interval) => {
+  return stoppedTuner
+    .startTuner()
+    .then((startedTuner) => {
+      const h1 = document.createElement('h1')
+      const h2 = document.createElement('h2')
+      h1.id = 'note'
+      h2.id = 'freq'
+      document.body.append(h1, h2)
+      startedTuner.displayAtInterval(interval)
+      return startedTuner
+    })
+    .catch((error) => {
+      console.error(error)
+    })
+}
