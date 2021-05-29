@@ -92,6 +92,48 @@ class Tuner {
       }
     }, interval)
   }
+
+  startTuner() {
+    return new Promise((resolve, reject) => {
+      try {
+        if (this.started === false) {
+          navigator.mediaDevices
+            .getUserMedia({ audio: true, video: false })
+            .then((stream) => {
+              const audioContext = new AudioContext()
+              const source = audioContext.createMediaStreamSource(stream)
+              const processor = audioContext.createScriptProcessor(2048, 1, 1)
+              processor.onaudioprocess = (event) => {
+                const micData = event.inputBuffer.getChannelData(0)
+                const detectPitch = Pitchfinder.ACF2PLUS({
+                  sampleRate: audioContext.sampleRate
+                })
+                this.currentPitch = detectPitch(micData)
+                if (
+                  this.currentPitch < 16000 &&
+                  this.currentPitch >= Tuner.c0 &&
+                  !(
+                    isNaN(this.currentPitch) ||
+                    typeof this.currentPitch === 'undefined'
+                  )
+                ) {
+                  this._pitchArray.push(this.currentPitch)
+                }
+              }
+              source.connect(processor)
+              processor.connect(audioContext.destination)
+            })
+            .then(() => {
+              this.started = true
+            })
+        }
+        resolve(this)
+      } catch (e) {
+        this.started = false
+        reject(`Error during tuner setup: ${e}`)
+      }
+    })
+  }
 }
 
 export default Tuner
