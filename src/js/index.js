@@ -85,3 +85,19 @@ const createTuner = () => {
     }
   })
 }
+
+const highlightMatchingNotes = (startedTuner, notes, interval) => {
+  try {
+    clearInterval(matchNotesInterval)
+  } catch (e) {
+    console.error(e)
+  }
+  matchNotesInterval = setInterval(() => {
+    if (startedTuner.matchNotes(notes)) {
+      noteH1().style.color = 'green'
+    } else {
+      noteH1().style.color = 'black'
+    }
+  }, interval)
+  return tuner
+}
