@@ -95,6 +95,24 @@ const displayTunings = (tunings) => {
   return []
 }
 
+const displayInstrument = (instrument) => {
+  if (typeof instrument !== 'undefined') {
+    const h1 = document.createElement('h1')
+    const tunings = instrument.included
+    h1.id = 'instrument-name'
+    h1.textContent = instrument.data.attributes.name
+    document.body.append(h1)
+    //displayTunings(tunings)
+  }
+  return instrument
+}
+
+const displayInstruments = (instruments) => {
+  for (const instrument of instruments) {
+    displayInstrument(instrument)
+  }
+}
+
 const startAndDisplayTuner = (stoppedTuner, interval) => {
   return stoppedTuner
     .startTuner()
