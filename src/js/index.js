@@ -74,3 +74,14 @@ const startAndDisplayTuner = (stoppedTuner, interval) => {
       console.error(error)
     })
 }
+
+const createTuner = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      tuner = tuner instanceof Tuner ? tuner : new Tuner()
+      resolve(tuner)
+    } catch (e) {
+      reject(`Error while creating tuner: ${e}`)
+    }
+  })
+}
