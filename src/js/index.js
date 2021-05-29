@@ -14,6 +14,20 @@ const tuningFormSubmit = () => document.getElementById('tuning-form-submit')
 let matchNotesInterval
 let tuner
 
+const fetchData = (route) => {
+  return fetch(BASE_URL + route, {
+    headers: { Accept: 'application/json' }
+  })
+    .then((response) => response.json())
+    .then((json) => json)
+    .catch((error) => console.error(error))
+}
+
+const getTuning = (id) => fetchData(`tunings/${id}`)
+const getTunings = () => fetchData('tunings')
+const getInstrument = (id) => fetchData(`instruments/${id}`)
+const getInstruments = () => fetchData('instruments')
+
 const showTuningForm = () => {
   const tuningForm = document.createElement('form')
   const tuningFormSelect = document.createElement('select')
