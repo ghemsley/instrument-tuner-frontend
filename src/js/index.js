@@ -122,6 +122,17 @@ const displayInstruments = (instruments) => {
   }
 }
 
+const createTuner = () => {
+  return new Promise((resolve, reject) => {
+    try {
+      tuner = tuner instanceof Tuner ? tuner : new Tuner()
+      resolve(tuner)
+    } catch (e) {
+      reject(`Error while creating tuner: ${e}`)
+    }
+  })
+}
+
 const startAndDisplayTuner = (stoppedTuner, interval) => {
   return stoppedTuner
     .startTuner()
@@ -137,17 +148,6 @@ const startAndDisplayTuner = (stoppedTuner, interval) => {
     .catch((error) => {
       console.error(error)
     })
-}
-
-const createTuner = () => {
-  return new Promise((resolve, reject) => {
-    try {
-      tuner = tuner instanceof Tuner ? tuner : new Tuner()
-      resolve(tuner)
-    } catch (e) {
-      reject(`Error while creating tuner: ${e}`)
-    }
-  })
 }
 
 const highlightMatchingNotes = (startedTuner, notes, interval) => {
