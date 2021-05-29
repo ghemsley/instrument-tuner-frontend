@@ -69,6 +69,29 @@ class Tuner {
     h1().textContent = note.toUpperCase()
     h2().textContent = freq
   }
+
+  displayAtInterval(interval) {
+    let sum = 0
+    try {
+      clearInterval(this._displayInterval)
+    } catch (e) {
+      console.error(e)
+    }
+    this._displayInterval = setInterval(() => {
+      if (this._pitchArray.length > 0) {
+        for (const pitch of this._pitchArray) {
+          sum += pitch
+        }
+        if (!(isNaN(sum) || typeof sum === 'undefined') && sum >= Tuner.c0) {
+          const avg = sum / this._pitchArray.length
+          this.currentNote = Tuner.convertPitch(avg)
+          Tuner.display(this.currentNote, avg)
+        }
+        this._pitchArray = []
+        sum = 0
+      }
+    }, interval)
+  }
 }
 
 export default Tuner
