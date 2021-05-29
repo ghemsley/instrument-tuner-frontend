@@ -25,6 +25,43 @@ class Tuner {
     'a#',
     'b'
   ]
+
+  static noteScaleArray = Tuner.notesWithOctave(Tuner.notes)
+  static pitchMap = Tuner.mapPitches(Tuner.noteScaleArray)
+
+  static convertPitch(pitch) {
+    const h = Math.round(12 * Math.log2(pitch / Tuner.c0))
+    const octave = Math.floor(h / 12)
+    const index = h % 12
+    return Tuner.notes[index] + octave.toString()
+  }
+
+  static convertNote(note) {
+    return this.pitchMap[note]
+  }
+
+  static notesWithOctave(notes) {
+    const array = []
+    for (let i = 0; i <= 8; i++) {
+      for (const note of notes) {
+        array.push(note + i.toString())
+      }
+    }
+    return array
+  }
+
+  static mapPitches(noteScaleArray) {
+    const map = {}
+    for (const note of noteScaleArray) {
+      for (let pitch = 16.35; pitch <= 7902.13; pitch += 0.01) {
+        if (Tuner.convertPitch(pitch) === note) {
+          map[note] = pitch
+          break
+        }
+      }
+    }
+    return map
+  }
 }
 
 export default Tuner
