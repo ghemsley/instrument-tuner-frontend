@@ -143,6 +143,49 @@ class Tuner {
     }
     return false
   }
+
+  drawGuage() {
+    const guage = document.createElement('div')
+    const needle = document.createElement('div')
+
+    guage.style.height = '50px'
+    guage.style.width = '1000px'
+    guage.style.position = 'fixed'
+    guage.style.bottom = '50%'
+    guage.style.left = '100px'
+    guage.style.backgroundColor = 'rgb(0, 100, 200)'
+
+    needle.style.height = '50px'
+    needle.style.width = '10px'
+    needle.style.position = 'fixed'
+    needle.style.bottom = '50%'
+    needle.style.left = '100px'
+    needle.style.backgroundColor = 'rgb(0, 200, 100)'
+
+    guage.appendChild(needle)
+    document.body.appendChild(guage)
+
+    setInterval(() => {
+      let min = Tuner.convertNote(this.currentNote)
+      let mid = this.currentPitch
+      let max =
+        Tuner.pitchMap[
+          Tuner.noteScaleArray[
+            Tuner.noteScaleArray.indexOf(this.currentNote) + 1
+          ]
+        ]
+      mid = mid < min ? min : mid
+      mid = mid > max ? max : mid
+      let range = max - min
+      range = range < 0 ? 0 : range
+      let position = mid - min
+      position = position < 0 ? 0 : position
+      let percentage = range <= 0 ? 100 : position / range
+      let final = percentage * 1000 + 100
+      final = final > 1100 ? 1100 : final
+      needle.style.left = `${final}px`
+    }, 50)
+  }
 }
 
 export default Tuner
