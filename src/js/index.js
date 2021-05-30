@@ -1,7 +1,10 @@
 import Tuner from './tuner'
+import '../sass/app.scss'
 
 const BASE_URL = 'http://localhost:3000/'
 
+const grid = () => document.getElementById('grid')
+const container = () => document.getElementById('container')
 const noteH1 = () => document.getElementById('note')
 const freqH2 = () => document.getElementById('freq')
 const tuningNameH3 = () => document.getElementById('tuning-name')
@@ -15,6 +18,7 @@ let matchNotesInterval
 let tuner
 
 document.addEventListener('DOMContentLoaded', (event) => {
+  createGrid()
   getInstrument(1)
     .then((instrument) => displayInstrument(instrument))
     .then((instrument) => {
@@ -22,6 +26,19 @@ document.addEventListener('DOMContentLoaded', (event) => {
       populateTuningForm(instrument)
     })
 })
+
+const createGrid = () => {
+  const grid = document.createElement('div')
+  const container = document.createElement('div')
+
+  grid.id = 'grid'
+  container.id = 'container'
+  grid.classList.add('pure-g')
+  container.classList.add('pure-u-1-1')
+
+  grid.appendChild(container)
+  document.body.appendChild(grid)
+}
 
 const fetchData = (route) => {
   return fetch(BASE_URL + route, {
@@ -46,11 +63,16 @@ const showTuningForm = () => {
   tuningFormSelect.id = 'tuning-form-select'
   tuningFormSubmit.id = 'tuning-form-submit'
   tuningFormSubmit.type = 'submit'
+
+  tuningForm.classList.add('pure-form')
+
   tuningFormSelect.addEventListener('change', updateTuning)
   tuningForm.addEventListener('submit', updateTuning)
+
   tuningForm.appendChild(tuningFormSelect)
   tuningForm.appendChild(tuningFormSubmit)
-  document.body.appendChild(tuningForm)
+
+  container().appendChild(tuningForm)
 }
 
 const populateTuningForm = (instrument) => {
@@ -86,10 +108,10 @@ const displayTuning = (tuning, name = '') => {
   }
   h4.textContent = notes.join(' ')
   if (!tuningNameH3()) {
-    document.body.appendChild(h3)
+    container().appendChild(h3)
   }
   if (!tuningNotesH4()) {
-    document.body.appendChild(h4)
+    container().appendChild(h4)
   }
   return notes
 }
@@ -110,7 +132,7 @@ const displayInstrument = (instrument) => {
     const tunings = instrument.included
     h1.id = 'instrument-name'
     h1.textContent = instrument.data.attributes.name
-    document.body.append(h1)
+    container().append(h1)
     //displayTunings(tunings)
   }
   return instrument
@@ -141,7 +163,7 @@ const startAndDisplayTuner = (stoppedTuner, interval) => {
       const h2 = document.createElement('h2')
       h1.id = 'note'
       h2.id = 'freq'
-      document.body.append(h1, h2)
+      container().append(h1, h2)
       startedTuner.displayAtInterval(interval)
       return startedTuner
     })
