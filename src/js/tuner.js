@@ -1,5 +1,9 @@
 import Pitchfinder from 'pitchfinder'
 
+const guage = () => document.getElementById('guage')
+const needle = () => document.getElementById('needle')
+const marker = () => document.getElementById('marker')
+
 class Tuner {
   constructor() {
     this._pitchArray = []
@@ -145,27 +149,41 @@ class Tuner {
   }
 
   drawGuage() {
-    const guage = document.createElement('div')
-    const needle = document.createElement('div')
+    const _guage = guage() || document.createElement('div')
+    const _needle = needle() || document.createElement('div')
+    const _marker = marker() || document.createElement('div')
 
-    guage.style.height = '50px'
-    guage.style.width = '1000px'
-    guage.style.position = 'fixed'
-    guage.style.bottom = '50%'
-    guage.style.left = '100px'
-    guage.style.backgroundColor = 'rgb(0, 100, 200)'
+    _guage.id = 'guage'
+    _guage.style.height = '50px'
+    _guage.style.width = '50%'
+    _guage.style.position = 'fixed'
+    _guage.style.bottom = '25%'
+    _guage.style.left = '25%'
+    _guage.style.backgroundColor = 'rgb(0, 100, 200)'
 
-    needle.style.height = '50px'
-    needle.style.width = '10px'
-    needle.style.position = 'fixed'
-    needle.style.bottom = '50%'
-    needle.style.left = '100px'
-    needle.style.backgroundColor = 'rgb(0, 200, 100)'
+    _needle.id = 'needle'
+    _needle.style.height = '50px'
+    _needle.style.width = '20px'
+    _needle.style.position = 'fixed'
+    _needle.style.bottom = '25%'
+    _needle.style.left = '25%'
+    _needle.style.backgroundColor = 'rgb(0, 200, 100)'
 
-    guage.appendChild(needle)
-    document.body.appendChild(guage)
+    _marker.id = 'marker'
+    _marker.style.height = '50px'
+    _marker.style.width = '10px'
+    _marker.style.position = 'fixed'
+    _marker.style.bottom = '25%'
+    _marker.style.left = '50%'
+    _marker.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+
+    if (!document.body.contains(_guage)) {
+      _guage.append(_needle, _marker)
+      document.body.appendChild(_guage)
+    }
 
     setInterval(() => {
+      const unit = window.innerWidth / 4
       let min = Tuner.convertNote(this.currentNote)
       let mid = this.currentPitch
       let max =
@@ -174,17 +192,17 @@ class Tuner {
             Tuner.noteScaleArray.indexOf(this.currentNote) + 1
           ]
         ]
-      mid = mid < min ? min : mid
+      mid = mid < min || !mid ? min : mid
       mid = mid > max ? max : mid
       let range = max - min
       range = range < 0 ? 0 : range
       let position = mid - min
       position = position < 0 ? 0 : position
-      let percentage = range <= 0 ? 100 : position / range
-      let final = percentage * 1000 + 100
-      final = final > 1100 ? 1100 : final
-      needle.style.left = `${final}px`
-    }, 50)
+      let percentage = range <= 0 ? 1 : position / range
+      let final = percentage * (unit * 2) + unit
+      final = final > unit * 3 ? unit * 3 : final
+      _needle.style.left = `${final}px`
+    }, 25)
   }
 }
 
