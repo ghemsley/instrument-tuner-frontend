@@ -1,3 +1,4 @@
+import Navbar from './navbar'
 import Tuning from './tuning'
 import Instrument from './instrument'
 import Tuner from './tuner'
@@ -20,26 +21,55 @@ let matchNotesInterval
 let tuner
 
 document.addEventListener('DOMContentLoaded', (event) => {
-  createGrid()
-  getInstrument(1)
-    .then((instrumentJSON) => createInstrument(instrumentJSON))
-    .then((instrument) => displayInstrument(instrument))
-    .then((instrument) => {
-      showTuningForm(instrument)
-    })
+  createContainer(document.body).then((container) => createNavbar(container))
 })
 
-const createGrid = () => {
-  const grid = document.createElement('div')
-  const container = document.createElement('div')
+const showGuitar = () => {
+  if (!instrumentNameH1()) {
+    return getInstrument(1)
+      .then((instrumentJSON) => createInstrument(instrumentJSON))
+      .then((instrument) => displayInstrument(instrument))
+      .then((instrument) => {
+        showTuningForm(instrument)
+      })
+  }
+}
 
-  grid.id = 'grid'
-  container.id = 'container'
-  grid.classList.add('pure-g')
-  container.classList.add('pure-u-1-1')
+const createContainer = (parent) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const grid = document.createElement('div')
+      const container = document.createElement('div')
 
-  grid.appendChild(container)
-  document.body.appendChild(grid)
+      grid.id = 'grid'
+      container.id = 'container'
+      grid.classList.add('pure-g')
+      container.classList.add('pure-u-1-1')
+
+      grid.appendChild(container)
+      parent.appendChild(grid)
+      resolve(container)
+    } catch (e) {
+      reject(`Error when creating grid: ${e}`)
+    }
+  })
+}
+
+const createNavbar = (parent) => {
+  return new Promise((resolve, reject) => {
+    try {
+      const sections = [
+        { name: 'Guitar', onClick: showGuitar },
+        { name: 'Github', link: 'https://www.github.com/ghemsley' },
+        { name: 'Blog', link: 'https://www.grahamhemsley.com' }
+      ]
+      const navbar = new Navbar('Instrument tuner', sections)
+      navbar.appendToParent(parent)
+      resolve(navbar)
+    } catch (e) {
+      reject(`Error when creating navbar: ${e}`)
+    }
+  })
 }
 
 const fetchData = (route) => {
@@ -92,9 +122,7 @@ const showTuningForm = (instrument) => {
 const populateTuningForm = (instrument) => {
   for (const tuning of instrument.tunings) {
     const option = document.createElement('option')
-    const string = `${tuning.name}: ${tuning.notes.join(
-      ', '
-    )}`
+    const string = `${tuning.name}: ${tuning.notes.join(', ')}`
     option.value = string
     option.text = string
     tuningFormSelect().appendChild(option)

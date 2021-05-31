@@ -71,7 +71,7 @@ class Tuner {
     const h1 = () => document.getElementById('note')
     const h2 = () => document.getElementById('freq')
     h1().textContent = note.toUpperCase()
-    h2().textContent = freq
+    h2().textContent = freq.toFixed(2) + ' Hz'
   }
 
   displayAtInterval(interval) {
