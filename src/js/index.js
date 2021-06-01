@@ -56,19 +56,25 @@ const createContainer = (parent) => {
 }
 
 const createNavbar = (parent) => {
-  return new Promise((resolve, reject) => {
-    try {
-      const sections = [
-        { name: 'Guitar', onClick: showGuitar },
-        { name: 'Github', link: 'https://www.github.com/ghemsley' },
-        { name: 'Blog', link: 'https://www.grahamhemsley.com' }
-      ]
+  return getInstruments().then((instrumentJSON) => {
+    createInstruments(instrumentJSON).then((instruments) => {
+      console.log(instruments)
+      const sections = []
+      for (const instrument of instruments) {
+        sections.push({
+          name: instrument.name,
+          onClick: displayInstrument.bind(
+            displayInstrument,
+            instrument,
+            container()
+          )
+        })
+      }
+      console.log(sections)
       const navbar = new Navbar('Instrument tuner', sections)
       navbar.appendToParent(parent)
-      resolve(navbar)
-    } catch (e) {
-      reject(`Error when creating navbar: ${e}`)
-    }
+      return navbar
+    })
   })
 }
 
@@ -82,57 +88,72 @@ const fetchData = (route) => {
 }
 
 const getTuning = (id) => fetchData(`tunings/${id}`)
-const getTunings = () => fetchData('tunings')
+const getTunings = (filter) => fetchData(`tunings${filter ? filter : ''}`)
 const getInstrument = (id) => fetchData(`instruments/${id}`)
-const getInstruments = () => fetchData('instruments')
+const getInstruments = (filter) =>
+  fetchData(`instruments${filter ? filter : ''}`)
 
-const createInstrument = (instrumentJSON) => {
-  const name = instrumentJSON.data.attributes.name
-  const tunings = instrumentJSON.included.map(
+const createInstrument = (instrumentJSON, tuningsJSON) => {
+  const name = instrumentJSON.attributes.name
+  const tunings = tuningsJSON.data.map(
     (tuning) => new Tuning(tuning.attributes.name, tuning.attributes.notes)
   )
   return new Instrument(name, tunings)
 }
 
-const createInstruments = (instrumentsJSON) =>
-  instrumentsJSON.map((instrument) => createInstrument(instrument))
+const createInstruments = async (instrumentsJSON) => {
+  const instruments = []
+  for (const instrumentJSON of instrumentsJSON.data) {
+    const tuningsJSON = await getTunings(
+      `?filter[instrument_id_eq]=${instrumentJSON.id}`
+    )
+    instruments.push(createInstrument(instrumentJSON, tuningsJSON))
+  }
+  return instruments
+}
 
-const showTuningForm = (instrument) => {
-  const tuningForm = document.createElement('form')
-  const tuningFormSelect = document.createElement('select')
-  const tuningFormSubmit = document.createElement('input')
+const showTuningForm = (instrument, parent) => {
+  if (!tuningForm()) {
+    const tuningForm = document.createElement('form')
+    const tuningFormSelect = document.createElement('select')
+    const tuningFormSubmit = document.createElement('input')
 
-  tuningForm.id = 'tuning-form'
-  tuningFormSelect.id = 'tuning-form-select'
-  tuningFormSubmit.id = 'tuning-form-submit'
-  tuningFormSubmit.type = 'submit'
+    tuningForm.id = 'tuning-form'
+    tuningFormSelect.id = 'tuning-form-select'
+    tuningFormSubmit.id = 'tuning-form-submit'
+    tuningFormSubmit.type = 'submit'
 
-  tuningForm.classList.add('pure-form')
+    tuningForm.classList.add('pure-form')
 
-  tuningFormSelect.addEventListener('change', updateTuning)
-  tuningForm.addEventListener('submit', updateTuning)
+    tuningFormSelect.addEventListener('change', updateTuning)
+    tuningForm.addEventListener('submit', updateTuning)
 
-  tuningForm.appendChild(tuningFormSelect)
-  tuningForm.appendChild(tuningFormSubmit)
+    tuningForm.appendChild(tuningFormSelect)
+    tuningForm.appendChild(tuningFormSubmit)
 
-  container().appendChild(tuningForm)
+    parent.appendChild(tuningForm)
+  }
   return populateTuningForm(instrument)
 }
 
 const populateTuningForm = (instrument) => {
+  const _tuningFormSelect = document.createElement('select')
+  _tuningFormSelect.id = 'tuning-form-select'
+  _tuningFormSelect.addEventListener('change', updateTuning)
   for (const tuning of instrument.tunings) {
     const option = document.createElement('option')
     const string = `${tuning.name}: ${tuning.notes.join(', ')}`
     option.value = string
     option.text = string
-    tuningFormSelect().appendChild(option)
+    _tuningFormSelect.appendChild(option)
   }
+  tuningFormSelect().replaceWith(_tuningFormSelect)
   return instrument
 }
 
 const displayTuning = (tuning) => {
-  const h3 = tuningNameH3() || document.createElement('h3')
-  const h4 = tuningNotesH4() || document.createElement('h4')
+  const h3 = tuningNameH3() ? tuningNameH3() : document.createElement('h3')
+  const h4 = tuningNotesH4() ? tuningNotesH4() : document.createElement('h4')
   h3.id = 'tuning-name'
   h4.id = 'tuning-notes'
   h3.textContent = tuning.name
@@ -146,21 +167,25 @@ const displayTuning = (tuning) => {
   return tuning
 }
 
-const displayTunings = (tunings) => {
+const displayTunings = (tunings, parent) => {
   for (const tuning of tunings) {
     displayTuning(tuning)
   }
   return tunings
 }
 
-const displayInstrument = (instrument) => {
+const displayInstrument = (instrument, parent) => {
   return new Promise((resolve, reject) => {
     try {
-      const h1 = document.createElement('h1')
+      const h1 = instrumentNameH1()
+        ? instrumentNameH1()
+        : document.createElement('h1')
       h1.id = 'instrument-name'
       h1.textContent = instrument.name
-      container().append(h1)
-      displayTunings(instrument.tunings)
+      if (!instrumentNameH1()) {
+        parent.append(h1)
+      }
+      showTuningForm(instrument, parent)
       resolve(instrument)
     } catch (e) {
       reject(`Error displaying instrument: ${e}`)
@@ -190,11 +215,13 @@ const startAndDisplayTuner = (stoppedTuner, interval) => {
   return stoppedTuner
     .startTuner()
     .then((startedTuner) => {
-      const h1 = document.createElement('h1')
-      const h2 = document.createElement('h2')
+      const h1 = noteH1() ? noteH1() : document.createElement('h1')
+      const h2 = freqH2() ? freqH2() : document.createElement('h2')
       h1.id = 'note'
       h2.id = 'freq'
-      container().append(h1, h2)
+      if (!container().contains(h1)) {
+        container().append(h1, h2)
+      }
       startedTuner.displayAtInterval(interval)
       return startedTuner
     })
