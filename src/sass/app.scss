@@ -6,3 +6,11 @@
   align-items: center;
   justify-content: center;
 }
+
+#guage, #needle, #marker {
+  border-radius: 4px;
+}
+
+form input, select, button {
+  min-width: 320px;
+}
