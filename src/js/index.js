@@ -19,6 +19,8 @@ const tuningForm = () => document.getElementById('tuning-form')
 const tuningFormSelect = () => document.getElementById('tuning-form-select')
 const tuningFormSubmit = () => document.getElementById('tuning-form-submit')
 const newInstrumentForm = () => document.getElementById('new-instrument-form')
+const newInstrumentFormH1 = () =>
+  document.getElementById('new-instrument-form-title')
 const newInstrumentFormNameInput = () =>
   document.getElementById('new-instrument-form-name-input')
 const newInstrumentFormTuningNameInput = () =>
@@ -30,8 +32,6 @@ const newInstrumentFormSubmit = () =>
 const newInstrumentFormAddTuningButton = () =>
   document.getElementById('new-instrument-form-add-tuning-button')
 
-let matchNotesInterval
-let tuner
 const childElementFunctions = [
   noteH1,
   freqH2,
@@ -42,12 +42,15 @@ const childElementFunctions = [
   tuningFormSelect,
   tuningFormSubmit,
   newInstrumentForm,
+  newInstrumentFormH1,
   newInstrumentFormNameInput,
   newInstrumentFormTuningNameInput,
   newInstrumentFormTuningNotesInput,
   newInstrumentFormSubmit,
   newInstrumentFormAddTuningButton
 ]
+let matchNotesInterval
+let tuner
 
 document.addEventListener('DOMContentLoaded', (event) => {
   createLayout()
@@ -192,26 +195,31 @@ const createNewInstrumentForm = (parent) => {
   }
   if (!newInstrumentForm()) {
     const newInstrumentForm = document.createElement('form')
+    const newInstrumentFormH1 = document.createElement('h1')
     const newInstrumentFormNameInput = document.createElement('input')
     const newInstrumentFormTuningNameInput = document.createElement('input')
     const newInstrumentFormTuningNotesInput = document.createElement('input')
     const newInstrumentFormSubmit = document.createElement('input')
     const newInstrumentFormAddTuningButton = document.createElement('button')
+
     newInstrumentForm.id = 'new-instrument-form'
+    newInstrumentFormH1.id = 'new-instrument-form-title'
     newInstrumentFormNameInput.id = 'new-instrument-form-name-input'
     newInstrumentFormTuningNameInput.id =
       'new-instrument-form-tuning-name-input'
     newInstrumentFormTuningNotesInput.id =
       'new-instrument-form-tuning-notes-input'
+    newInstrumentFormSubmit.id = 'new-instrument-form-submit'
+    newInstrumentFormAddTuningButton.id =
+      'new-instrument-form-add-tuning-button'
+
     newInstrumentForm.classList.add('pure-form', 'pure-form-stacked')
-    newInstrumentFormNameInput.placeholder = 'Name'
+    newInstrumentFormH1.textContent = 'New instrument'
+    newInstrumentFormNameInput.placeholder = 'Instrument name'
     newInstrumentFormTuningNameInput.placeholder = 'Tuning name'
     newInstrumentFormTuningNotesInput.placeholder =
       'Tuning notes (comma separated)'
-    newInstrumentFormSubmit.id = 'new-instrument-form-submit'
     newInstrumentFormSubmit.type = 'submit'
-    newInstrumentFormAddTuningButton.id =
-      'new-instrument-form-add-tuning-button'
     newInstrumentFormAddTuningButton.textContent = 'Add another tuning'
     newInstrumentFormAddTuningButton.addEventListener(
       'click',
@@ -219,6 +227,7 @@ const createNewInstrumentForm = (parent) => {
     )
     newInstrumentForm.addEventListener('submit', sendNewInstrumentFormData)
     newInstrumentForm.append(
+      newInstrumentFormH1,
       newInstrumentFormNameInput,
       newInstrumentFormTuningNameInput,
       newInstrumentFormTuningNotesInput,
@@ -274,7 +283,7 @@ const showTuningForm = (instrument, parent) => {
     tuningFormSubmit.id = 'tuning-form-submit'
     tuningFormSubmit.type = 'submit'
 
-    tuningForm.classList.add('pure-form')
+    tuningForm.classList.add('pure-form', 'pure-form-stacked')
 
     tuningFormSelect.addEventListener('change', updateTuning)
     tuningForm.addEventListener('submit', updateTuning)
