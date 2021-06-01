@@ -18,6 +18,14 @@ class Instrument {
       }
     }
   }
+
+  toObject() {
+    let object = {
+      name: this.name,
+      tunings: this.tunings.map((tuning) => tuning.toObject())
+    }
+    return object
+  }
 }
 
 export default Instrument
