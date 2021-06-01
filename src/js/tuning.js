@@ -3,6 +3,11 @@ class Tuning {
     this.name = name
     this.notes = notes
   }
+
+  toObject() {
+    let object = { name: this.name, notes: this.notes }
+    return object
+  }
 }
 
 export default Tuning
