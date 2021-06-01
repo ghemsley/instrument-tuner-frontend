@@ -1,6 +1,6 @@
 import Pitchfinder from 'pitchfinder'
 
-const container = () => document.getElementById('container')
+const content = () => document.getElementById('content')
 const guage = () => document.getElementById('guage')
 const needle = () => document.getElementById('needle')
 const marker = () => document.getElementById('marker')
@@ -70,10 +70,14 @@ class Tuner {
   }
 
   static display(note, freq) {
-    const h1 = () => document.getElementById('note')
-    const h2 = () => document.getElementById('freq')
-    h1().textContent = note.toUpperCase()
-    h2().textContent = freq.toFixed(2) + ' Hz'
+    const h1 = document.getElementById('note')
+    const h2 = document.getElementById('freq')
+    if (h1) {
+      h1.textContent = note.toUpperCase()
+    }
+    if (h2) {
+      h2.textContent = freq.toFixed(2) + ' Hz'
+    }
   }
 
   displayAtInterval(interval) {
@@ -151,39 +155,39 @@ class Tuner {
   }
 
   createGuage() {
-    const _guage = guage() ? guage() : document.createElement('div')
-    const _needle = needle() ? needle() : document.createElement('div')
-    const _marker = marker() ? marker() : document.createElement('div')
+    const guage = document.createElement('div')
+    const needle = document.createElement('div')
+    const marker = document.createElement('div')
 
-    _guage.id = 'guage'
-    _guage.style.height = '50px'
-    _guage.style.width = '50%'
-    _guage.style.position = 'fixed'
-    _guage.style.bottom = '25%'
-    _guage.style.left = '25%'
-    _guage.style.backgroundColor = 'rgb(0, 100, 200)'
+    guage.id = 'guage'
+    guage.style.height = '50px'
+    guage.style.width = '50%'
+    guage.style.position = 'fixed'
+    guage.style.bottom = '25%'
+    guage.style.left = '25%'
+    guage.style.backgroundColor = 'rgb(0, 100, 200)'
 
-    _needle.id = 'needle'
-    _needle.style.height = '50px'
-    _needle.style.width = '20px'
-    _needle.style.position = 'fixed'
-    _needle.style.bottom = '25%'
-    _needle.style.left = '25%'
-    _needle.style.backgroundColor = 'rgb(0, 200, 100)'
+    needle.id = 'needle'
+    needle.style.height = '50px'
+    needle.style.width = '20px'
+    needle.style.position = 'fixed'
+    needle.style.bottom = '25%'
+    needle.style.left = '25%'
+    needle.style.backgroundColor = 'rgb(0, 200, 100)'
 
-    _marker.id = 'marker'
-    _marker.style.height = '50px'
-    _marker.style.width = '10px'
-    _marker.style.position = 'fixed'
-    _marker.style.bottom = '25%'
-    _marker.style.left = '50%'
-    _marker.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
-    _guage.append(_needle, _marker)
-    container().appendChild(_guage)
+    marker.id = 'marker'
+    marker.style.height = '50px'
+    marker.style.width = '10px'
+    marker.style.position = 'fixed'
+    marker.style.bottom = '25%'
+    marker.style.left = '50%'
+    marker.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+    guage.append(needle, marker)
+    content().appendChild(guage)
   }
 
   drawGuage() {
-    if (!(guage() instanceof HTMLDivElement)) {
+    if (!guage()) {
       this.createGuage()
     }
     if (this._guageInterval) {
@@ -208,8 +212,10 @@ class Tuner {
       let percentage = range <= 0 ? 1 : position / range
       let final = percentage * (unit * 2) + unit
       final = final > unit * 3 ? unit * 3 : final
-      needle().style.left = `${final}px`
-    }, 25)
+      if (needle()) {
+        needle().style.left = `${final}px`
+      }
+    }, 50)
   }
 }
 
