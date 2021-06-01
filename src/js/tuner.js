@@ -1,5 +1,6 @@
 import Pitchfinder from 'pitchfinder'
 
+const container = () => document.getElementById('container')
 const guage = () => document.getElementById('guage')
 const needle = () => document.getElementById('needle')
 const marker = () => document.getElementById('marker')
@@ -8,6 +9,7 @@ class Tuner {
   constructor() {
     this._pitchArray = []
     this._displayInterval = null
+    this._guageInterval = null
     this.currentPitch = Tuner.c0
     this.currentNote = 'c0'
     this.started = false
@@ -148,10 +150,10 @@ class Tuner {
     return false
   }
 
-  drawGuage() {
-    const _guage = guage() || document.createElement('div')
-    const _needle = needle() || document.createElement('div')
-    const _marker = marker() || document.createElement('div')
+  createGuage() {
+    const _guage = guage() ? guage() : document.createElement('div')
+    const _needle = needle() ? needle() : document.createElement('div')
+    const _marker = marker() ? marker() : document.createElement('div')
 
     _guage.id = 'guage'
     _guage.style.height = '50px'
@@ -176,13 +178,18 @@ class Tuner {
     _marker.style.bottom = '25%'
     _marker.style.left = '50%'
     _marker.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+    _guage.append(_needle, _marker)
+    container().appendChild(_guage)
+  }
 
-    if (!document.body.contains(_guage)) {
-      _guage.append(_needle, _marker)
-      document.body.appendChild(_guage)
+  drawGuage() {
+    if (!(guage() instanceof HTMLDivElement)) {
+      this.createGuage()
     }
-
-    setInterval(() => {
+    if (this._guageInterval) {
+      clearInterval(this._guageInterval)
+    }
+    this._guageInterval = setInterval(() => {
       const unit = window.innerWidth / 4
       let min = Tuner.convertNote(this.currentNote)
       let mid = this.currentPitch
@@ -201,7 +208,7 @@ class Tuner {
       let percentage = range <= 0 ? 1 : position / range
       let final = percentage * (unit * 2) + unit
       final = final > unit * 3 ? unit * 3 : final
-      _needle.style.left = `${final}px`
+      needle().style.left = `${final}px`
     }, 25)
   }
 }
