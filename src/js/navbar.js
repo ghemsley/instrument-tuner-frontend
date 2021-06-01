@@ -1,3 +1,5 @@
+const content = () => document.getElementById('content')
+
 class Navbar {
   constructor(title, sections = []) {
     this.title = title
@@ -49,7 +51,11 @@ class Navbar {
     for (const section of sectionsArray) {
       navbarDiv.appendChild(section)
     }
-    parent.appendChild(navbarDiv)
+    if (content()) {
+      parent.insertBefore(navbarDiv, content().parentNode)
+    } else {
+      parent.appendChild(navbarDiv)
+    }
   }
 }
 
