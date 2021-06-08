@@ -1,15 +1,16 @@
 import Pitchfinder from 'pitchfinder'
 
-const content = () => document.getElementById('content')
-const guage = () => document.getElementById('guage')
-const needle = () => document.getElementById('needle')
-const marker = () => document.getElementById('marker')
-
 class Tuner {
   constructor() {
+    this.noteH1 = () => document.getElementById('note')
+    this.freqH2 = () => document.getElementById('freq')
+    this.guage = () => document.getElementById('guage')
+    this.needle = () => document.getElementById('needle')
+    this.marker = () => document.getElementById('marker')
     this._pitchArray = []
     this._displayInterval = null
     this._guageInterval = null
+    this._matchNotesInterval = null
     this.currentPitch = Tuner.c0
     this.currentNote = 'c0'
     this.started = false
@@ -69,18 +70,26 @@ class Tuner {
     return map
   }
 
-  static display(note, freq) {
-    const h1 = document.getElementById('note')
-    const h2 = document.getElementById('freq')
-    if (h1) {
-      h1.textContent = note.toUpperCase()
+  display(note, freq, parent) {
+    const h1 = this.noteH1() || document.createElement('h1')
+    const h2 = this.freqH2() || document.createElement('h2')
+    h1.id = 'note'
+    h2.id = 'freq'
+    h1.textContent = note.toUpperCase()
+    h2.textContent = freq.toFixed(2) + ' Hz'
+    if (parent.contains(h1)) {
+      this.noteH1().replaceWith(h1)
+    } else {
+      parent.append(h1)
     }
-    if (h2) {
-      h2.textContent = freq.toFixed(2) + ' Hz'
+    if (parent.contains(h2)) {
+      this.freqH2().replaceWith(h2)
+    } else {
+      parent.append(h2)
     }
   }
 
-  displayAtInterval(interval) {
+  displayAtInterval(parent, interval) {
     let sum = 0
     try {
       clearInterval(this._displayInterval)
@@ -95,7 +104,7 @@ class Tuner {
         if (!(isNaN(sum) || typeof sum === 'undefined') && sum >= Tuner.c0) {
           const avg = sum / this._pitchArray.length
           this.currentNote = Tuner.convertPitch(avg)
-          Tuner.display(this.currentNote, avg)
+          this.display(this.currentNote, avg, parent)
         }
         this._pitchArray = []
         sum = 0
@@ -103,7 +112,7 @@ class Tuner {
     }, interval)
   }
 
-  startTuner() {
+  start() {
     return new Promise((resolve, reject) => {
       try {
         if (this.started === false) {
@@ -154,7 +163,7 @@ class Tuner {
     return false
   }
 
-  createGuage() {
+  createGuage(layout) {
     const guage = document.createElement('div')
     const needle = document.createElement('div')
     const marker = document.createElement('div')
@@ -183,12 +192,13 @@ class Tuner {
     marker.style.left = '50%'
     marker.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
     guage.append(needle, marker)
-    content().appendChild(guage)
+    layout.content().appendChild(guage)
+    return this
   }
 
-  drawGuage() {
-    if (!guage()) {
-      this.createGuage()
+  drawGuage(layout, interval) {
+    if (!this.guage()) {
+      this.createGuage(layout)
     }
     if (this._guageInterval) {
       clearInterval(this._guageInterval)
@@ -206,16 +216,31 @@ class Tuner {
       mid = mid < min || !mid ? min : mid
       mid = mid > max ? max : mid
       let range = max - min
-      range = range < 0 ? 0 : range
+      range = range <= 0 ? 0.0001 : range
       let position = mid - min
       position = position < 0 ? 0 : position
-      let percentage = range <= 0 ? 1 : position / range
+      let percentage = range <= 0.0001 ? 1 : position / range
       let final = percentage * (unit * 2) + unit
       final = final > unit * 3 ? unit * 3 : final
-      if (needle()) {
-        needle().style.left = `${final}px`
+      if (this.needle()) {
+        this.needle().style.left = `${final}px`
       }
-    }, 50)
+    }, interval)
+    return this
+  }
+
+  highlightMatchingNotes(notes, interval) {
+    if (this._matchNotesInterval) {
+      clearInterval(this._matchNotesInterval)
+    }
+    this._matchNotesInterval = setInterval(() => {
+      if (this.matchNotes(notes) && this.noteH1()) {
+        this.noteH1().style.color = 'rgb(0, 200, 100)'
+      } else if (this.noteH1()) {
+        this.noteH1().style.color = 'black'
+      }
+    }, interval)
+    return this
   }
 }
 
