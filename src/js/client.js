@@ -1,8 +1,10 @@
 class Client {
-  static baseURL = 'http://localhost:3000/'
+  constructor(baseURL) {
+    this.baseURL = baseURL || 'http://localhost:3000/'
+  }
 
-  static sendData(route, object) {
-    return fetch(Client.baseURL + route, {
+  sendData(route, object) {
+    return fetch(this.baseURL + route, {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json'
@@ -14,36 +16,36 @@ class Client {
       .catch((error) => console.error(error))
   }
 
-  static fetchData = (route) => {
-    return fetch(Client.baseURL + route, {
+  fetchData = (route) => {
+    return fetch(this.baseURL + route, {
       headers: { Accept: 'application/json' }
     })
       .then((response) => response.json())
       .catch((error) => console.error(error))
   }
 
-  static getInstrument(id) {
-    return Client.fetchData(`instruments/${id}`)
+  getInstrument(id) {
+    return this.fetchData(`instruments/${id}`)
   }
-  static getInstruments(filter) {
-    return Client.fetchData(`instruments${filter ? filter : ''}`)
-  }
-
-  static sendInstrument = (instrument) => {
-    return Client.sendData('instruments', instrument.toObject())
+  getInstruments(filter) {
+    return this.fetchData(`instruments${filter ? filter : ''}`)
   }
 
-  static getTuning(id) {
-    return Client.fetchData(`tunings/${id}`)
-  }
-  static getTunings(filter) {
-    return Client.fetchData(`tunings${filter ? filter : ''}`)
+  sendInstrument = (instrument) => {
+    return this.sendData('instruments', instrument.toObject())
   }
 
-  static sendTunings(tunings, instrumentID) {
+  getTuning(id) {
+    return this.fetchData(`tunings/${id}`)
+  }
+  getTunings(filter) {
+    return this.fetchData(`tunings${filter ? filter : ''}`)
+  }
+
+  sendTunings(tunings, instrumentID) {
     let tuningsJSON = tunings.map((tuning) => tuning.toObject())
     let finalObject = { instrumentID: instrumentID, tunings: tuningsJSON }
-    return Client.sendData('tunings', finalObject)
+    return this.sendData('tunings', finalObject)
   }
 }
 
