@@ -2,22 +2,25 @@ import Navbar from './navbar'
 import Tuning from './tuning'
 import Instrument from './instrument'
 import Tuner from './tuner'
+import Client from './client'
 import '../sass/app.scss'
 
-const BASE_URL = 'http://localhost:3000/'
-
+// layout
 const grid = () => document.getElementById('grid')
 const container = () => document.getElementById('container')
 const navbar = () => document.getElementById('navbar')
 const content = () => document.getElementById('content')
+// tuning display
 const noteH1 = () => document.getElementById('note')
 const freqH2 = () => document.getElementById('freq')
 const tuningNameH3 = () => document.getElementById('tuning-name')
 const tuningNotesH4 = () => document.getElementById('tuning-notes')
 const instrumentNameH1 = () => document.getElementById('instrument-name')
+// tuning selection form
 const tuningForm = () => document.getElementById('tuning-form')
 const tuningFormSelect = () => document.getElementById('tuning-form-select')
 const tuningFormSubmit = () => document.getElementById('tuning-form-submit')
+// new instrument form
 const newInstrumentForm = () => document.getElementById('new-instrument-form')
 const newInstrumentFormH1 = () =>
   document.getElementById('new-instrument-form-title')
@@ -31,6 +34,7 @@ const newInstrumentFormSubmit = () =>
   document.getElementById('new-instrument-form-submit')
 const newInstrumentFormAddTuningButton = () =>
   document.getElementById('new-instrument-form-add-tuning-button')
+// new tuning form
 const newTuningForm = () => document.getElementById('new-tuning-form')
 const newTuningFormH1 = () => document.getElementById('new-tuning-form-title')
 const newTuningFormInstrumentSelect = () =>
@@ -43,7 +47,7 @@ const newTuningFormSubmit = () =>
   document.getElementById('new-tuning-form-submit')
 const newTuningFormAddTuningButton = () =>
   document.getElementById('new-tuning-form-add-tuning-button')
-
+// for clearing screen
 const childElementFunctions = [
   noteH1,
   freqH2,
@@ -102,7 +106,7 @@ const createContainer = (parent) => {
 }
 
 const createNavbar = (parent) => {
-  return getInstruments().then((instrumentJSON) => {
+  return Client.getInstruments().then((instrumentJSON) => {
     createInstruments(instrumentJSON).then((instruments) => {
       const sections = []
       for (const instrument of instruments) {
@@ -155,20 +159,6 @@ const createContent = (parent) => {
   })
 }
 
-const sendData = (route, object) => {
-  return fetch(BASE_URL + route, {
-    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-    method: 'POST',
-    body: JSON.stringify(object)
-  })
-    .then((response) => response.json())
-    .catch((error) => console.error(error))
-}
-
-const sendInstrument = (instrument) => {
-  return sendData('instruments', instrument.toObject())
-}
-
 const sendNewInstrumentFormData = (event) => {
   event.preventDefault()
   let name
@@ -189,7 +179,7 @@ const sendNewInstrumentFormData = (event) => {
   }
   try {
     let instrument = new Instrument(name, tunings)
-    sendInstrument(instrument).then((json) => {
+    Client.sendInstrument(instrument).then((json) => {
       location.reload()
       console.log(json)
     })
@@ -262,12 +252,6 @@ const createNewInstrumentForm = (parent) => {
   return newInstrumentForm
 }
 
-const sendTunings = (tunings, instrumentID) => {
-  let tuningsJSON = tunings.map((tuning) => tuning.toObject())
-  let finalObject = { instrumentID: instrumentID, tunings: tuningsJSON }
-  return sendData('tunings', finalObject)
-}
-
 const sendNewTuningFormData = (event) => {
   event.preventDefault()
   let instrumentID = 0
@@ -287,7 +271,7 @@ const sendNewTuningFormData = (event) => {
     tunings.push(new Tuning(tuningNames[i], tuningNotes[i].split(', ')))
   }
   try {
-    sendTunings(tunings, instrumentID).then((json) => {
+    Client.sendTunings(tunings, instrumentID).then((json) => {
       location.reload()
       console.log(json)
     })
@@ -311,7 +295,7 @@ const addTuningToTuningForm = (event) => {
 }
 
 const createNewTuningForm = (parent) => {
-  getInstruments().then((instrumentsJSON) => {
+  Client.getInstruments().then((instrumentsJSON) => {
     for (const child of parent.childNodes) {
       child.remove()
     }
@@ -371,20 +355,6 @@ const createNewTuningForm = (parent) => {
   })
 }
 
-const fetchData = (route) => {
-  return fetch(BASE_URL + route, {
-    headers: { Accept: 'application/json' }
-  })
-    .then((response) => response.json())
-    .catch((error) => console.error(error))
-}
-
-const getTuning = (id) => fetchData(`tunings/${id}`)
-const getTunings = (filter) => fetchData(`tunings${filter ? filter : ''}`)
-const getInstrument = (id) => fetchData(`instruments/${id}`)
-const getInstruments = (filter) =>
-  fetchData(`instruments${filter ? filter : ''}`)
-
 const createInstrument = (instrumentJSON, tuningsJSON) => {
   const name = instrumentJSON.attributes.name
   const tunings = tuningsJSON.data.map(
@@ -396,7 +366,7 @@ const createInstrument = (instrumentJSON, tuningsJSON) => {
 const createInstruments = async (instrumentsJSON) => {
   const instruments = []
   for (const instrumentJSON of instrumentsJSON.data) {
-    const tuningsJSON = await getTunings(
+    const tuningsJSON = await Client.getTunings(
       `?filter[instrument_id_eq]=${instrumentJSON.id}`
     )
     instruments.push(createInstrument(instrumentJSON, tuningsJSON))
