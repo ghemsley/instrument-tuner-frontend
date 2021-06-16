@@ -7,5 +7,5 @@ document.addEventListener('DOMContentLoaded', (event) => {
   const client = new Client('http://localhost:3000/')
   const tuner = new Tuner()
   const layout = new Layout(client, tuner)
-  layout.create(document.body)
+  layout.create(document.body, 16)
 })
