@@ -65,7 +65,7 @@ class Navbar {
     }
   }
 
-  static createFromData = (parent, layout, client, tuner) => {
+  static createFromData = (parent, layout, client, tuner, interval) => {
     return client.getInstruments().then((instrumentJSON) => {
       Instrument.createInstrumentsFromJSON(instrumentJSON, client).then(
         (instruments) => {
@@ -77,7 +77,8 @@ class Navbar {
                 instrument,
                 layout.content(),
                 layout,
-                tuner
+                tuner, 
+                interval
               )
             })
           }
