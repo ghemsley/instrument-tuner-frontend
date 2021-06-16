@@ -154,6 +154,27 @@ class Tuner {
     })
   }
 
+  stop() {
+    if (this._displayInterval) {
+      clearInterval(this._displayInterval)
+    }
+    if (this._guageInterval) {
+      clearInterval(this._guageInterval)
+    }
+    const elementFunctions = [
+      this.noteH1,
+      this.freqH2,
+      this.guage,
+      this.needle,
+      this.marker
+    ]
+    for (const elementFunction of elementFunctions) {
+      if (elementFunction()) {
+        elementFunction().remove()
+      }
+    }
+  }
+
   matchNotes(notesArray) {
     for (const note of notesArray) {
       if (note.toLowerCase() === this.currentNote) {
