@@ -12,6 +12,8 @@ class Layout {
     this.tuningNameH3 = () => document.getElementById('tuning-name')
     this.tuningNotesH4 = () => document.getElementById('tuning-notes')
     this.instrumentNameH1 = () => document.getElementById('instrument-name')
+    this.instrumentImg = () => document.getElementById('instrument-image')
+    this.unsplashAttributionP = () => document.getElementById('unsplash-attribution')
     this.guage = () => document.getElementById('guage')
     this.needle = () => document.getElementById('needle')
     this.marker = () => document.getElementById('marker')
@@ -54,6 +56,8 @@ class Layout {
       this.tuningNameH3,
       this.tuningNotesH4,
       this.instrumentNameH1,
+      this.instrumentImg,
+      this.unsplashAttributionP,
       this.guage,
       this.needle,
       this.marker,
@@ -79,13 +83,13 @@ class Layout {
     this.tuner = tuner
   }
 
-  async create(parent) {
+  async create(parent, interval) {
     await this.createContainer(parent)
-    await this.createNavbar(this.container())
+    await this.createNavbar(this.container(), interval)
     await this.createContent(this.container())
   }
 
-  createContainer (parent) {
+  createContainer(parent) {
     return new Promise((resolve, reject) => {
       try {
         const grid = document.createElement('div')
@@ -105,11 +109,17 @@ class Layout {
     })
   }
 
-  createNavbar(parent) {
-    return Navbar.createFromData(parent, this, this.client, this.tuner)
+  createNavbar(parent, interval) {
+    return Navbar.createFromData(
+      parent,
+      this,
+      this.client,
+      this.tuner,
+      interval
+    )
   }
 
-  createContent (parent) {
+  createContent(parent) {
     return new Promise((resolve, reject) => {
       try {
         const contentGrid = document.createElement('div')
@@ -127,6 +137,17 @@ class Layout {
         reject(`Error creating content div: ${e}`)
       }
     })
+  }
+
+  clear() {
+    for (const elementFunction of this.childElementFunctions) {
+      if (elementFunction()) {
+        elementFunction().remove()
+      }
+    }
+    if (this.tuner.started) {
+      this.tuner.stop()
+    }
   }
 }
 
