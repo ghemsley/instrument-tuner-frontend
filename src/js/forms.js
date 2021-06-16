@@ -6,11 +6,7 @@ class Forms {
     for (const child of parent.childNodes) {
       child.remove()
     }
-    for (const func of layout.childElementFunctions) {
-      if (func()) {
-        func().remove()
-      }
-    }
+    layout.clear()
     const newInstrumentForm = document.createElement('form')
     const newInstrumentFormH1 = document.createElement('h1')
     const newInstrumentFormNameInput = document.createElement('input')
@@ -100,11 +96,7 @@ class Forms {
       for (const child of parent.childNodes) {
         child.remove()
       }
-      for (const func of layout.childElementFunctions) {
-        if (func()) {
-          func().remove()
-        }
-      }
+      layout.clear()
       const options = []
       for (const instrument of instrumentsJSON.data) {
         const option = document.createElement('option')
@@ -193,9 +185,9 @@ class Forms {
   static handleNewInstrumentFormSubmit(client) {
     event.preventDefault()
     let name
-    let tuningNames = []
-    let tuningNotes = []
-    let tunings = []
+    const tuningNames = []
+    const tuningNotes = []
+    const tunings = []
     for (const child of event.target.children) {
       if (child.id === 'new-instrument-form-name-input') {
         name = child.value
@@ -209,7 +201,7 @@ class Forms {
       tunings.push(new Tuning(tuningNames[i], tuningNotes[i].split(', ')))
     }
     try {
-      let instrument = new Instrument(name, tunings)
+      const instrument = new Instrument(name, null, null, null, tunings)
       client.sendInstrument(instrument).then((json) => {
         location.reload()
         console.log(json)
