@@ -255,11 +255,12 @@ class Forms {
       tuner.displayAtInterval(parent, interval)
       tuner.highlightMatchingNotes(tuning.notes, interval)
       tuner.drawGuage(layout, interval)
-    } else if (!tuner.guage()) {
+    } else {
+      tuner.stop()
+      tuner.start()
+      tuner.displayAtInterval(parent, interval)
       tuner.highlightMatchingNotes(tuning.notes, interval)
       tuner.drawGuage(layout, interval)
-    } else {
-      tuner.highlightMatchingNotes(tuning.notes, interval)
     }
   }
 }

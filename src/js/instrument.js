@@ -42,6 +42,11 @@ class Instrument {
         func().remove()
       }
     }
+    try {
+      tuner.stop()
+    } catch (error) {
+      console.log(error)
+    }
     const h1 = layout.instrumentNameH1()
       ? layout.instrumentNameH1()
       : document.createElement('h1')
