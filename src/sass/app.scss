@@ -1,16 +1,133 @@
 @import '../../node_modules/purecss-sass/vendor/assets/stylesheets/purecss';
 
+body {
+  text-align: center;
+}
+
 #container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
-#guage, #needle, #marker {
+#navbar,
+#content {
+  border-radius: 4px;
+  background-color: rgba(0.75, 0.75, 0.75, 0.05);
+  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+#guage,
+#needle,
+#marker {
   border-radius: 4px;
 }
 
-form input, select, button {
+#content {
+  margin-top: 20px;
+}
+
+#instrument-name {
+  padding-top: 20px;
+}
+
+#instrument-image {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 20px;
+}
+
+form input,
+select,
+button {
   min-width: 320px;
+}
+
+#tuning-form select {
+  margin-bottom: 20px !important;
+}
+
+#unsplash-attribution {
+  font-style: italic;
+  font-size: smaller;
+}
+
+#guage,
+#needle,
+#marker {
+  position: fixed;
+  bottom: 1%;
+  height: 80px;
+}
+
+#guage {
+  width: 50%;
+  left: 25%;
+  background-color: steelblue;
+}
+
+#needle {
+  width: 30px;
+  left: 25%;
+  background-color: lightseagreen;
+}
+
+#marker {
+  width: 30px;
+  left: 49%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#note,
+#freq {
+  position: fixed;
+}
+
+#note {
+  left: 47.5%;
+  bottom: 10%;
+}
+
+#freq {
+  left: 47.5%;
+  bottom: 7.5%;
+}
+
+#tuning-name,
+#tuning-notes {
+  position: fixed;
+  left: 25%;
+}
+
+#tuning-name {
+  bottom: 10%;
+}
+
+#tuning-notes {
+  color: lightseagreen;
+  bottom: 7.5%;
+}
+
+#new-instrument-form, #new-tuning-form {
+  margin: 20px;
+}
+
+#new-tuning-form-title {
+  width: 8em;
+}
+
+button {
+  position: relative;
+  margin-top: -20px;
+  margin-bottom: 0px;
+  top: -20px;
 }
