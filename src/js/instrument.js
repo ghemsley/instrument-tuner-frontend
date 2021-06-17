@@ -61,7 +61,7 @@ class Instrument {
     img.src = this.imageLink
 
     unsplashAttributionP.id = 'unsplash-attribution'
-    unsplashAttributionP.innerHTML = `Photo courtesy of <a href="${this.imageArtistLink}">${this.imageArtist}</a> on <a href="https://unsplash.com/?utm_source=instrument-tuner&utm_medium=referral">Unsplash</a>`
+    unsplashAttributionP.innerHTML = `Photo by <a href="${this.imageArtistLink}">${this.imageArtist}</a> on <a href="https://unsplash.com/?utm_source=instrument-tuner&utm_medium=referral">Unsplash</a>`
 
     if (!layout.instrumentNameH1()) {
       parent.appendChild(h1)

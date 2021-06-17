@@ -62,6 +62,7 @@ class Forms {
     tuningFormSelect.id = 'tuning-form-select'
     tuningFormSubmit.id = 'tuning-form-submit'
     tuningFormSubmit.type = 'submit'
+    tuningFormSubmit.value = 'Start tuner'
 
     tuningForm.classList.add('pure-form', 'pure-form-stacked')
 
