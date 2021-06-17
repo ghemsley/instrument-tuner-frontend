@@ -16,9 +16,10 @@ body {
 #content {
   border-radius: 4px;
   background-color: rgba(0.75, 0.75, 0.75, 0.05);
-  box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.15);
 }
 
+#instrument-image,
 #guage,
 #needle,
 #marker {
@@ -26,7 +27,7 @@ body {
 }
 
 #content {
-  margin-top: 20px;
+  margin-top: 30px;
 }
 
 #instrument-name {
@@ -34,8 +35,10 @@ body {
 }
 
 #instrument-image {
-  padding-left: 20px;
-  padding-right: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
+  width: fit-content;
 }
 
 form {
@@ -65,19 +68,20 @@ button {
 #needle,
 #marker {
   position: fixed;
-  bottom: 1%;
+  bottom: 20px;
   height: 80px;
 }
 
 #guage {
-  width: 50%;
-  left: 25%;
+  width: 80%;
+  left: 10%;
   background-color: steelblue;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.25);
 }
 
 #needle {
   width: 30px;
-  left: 25%;
+  left: 10%;
   background-color: lightseagreen;
 }
 
@@ -94,27 +98,27 @@ button {
 
 #note {
   left: 47.5%;
-  bottom: 10%;
+  bottom: 120px;
 }
 
 #freq {
   left: 47.5%;
-  bottom: 7.5%;
+  bottom: 95px;
 }
 
 #tuning-name,
 #tuning-notes {
   position: fixed;
-  left: 25%;
+  left: 10%;
 }
 
 #tuning-name {
-  bottom: 10%;
+  bottom: 120px;
 }
 
 #tuning-notes {
   color: lightseagreen;
-  bottom: 7.5%;
+  bottom: 95px;
 }
 
 #new-instrument-form, #new-tuning-form {
