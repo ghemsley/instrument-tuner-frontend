@@ -206,7 +206,7 @@ class Tuner {
       clearInterval(this._guageInterval)
     }
     this._guageInterval = setInterval(() => {
-      const unit = window.innerWidth / 4
+      const unit = window.innerWidth / 10
       let min = Tuner.convertNote(this.currentNote)
       let mid = this.currentPitch
       let max =
@@ -222,8 +222,8 @@ class Tuner {
       let position = mid - min
       position = position < 0 ? 0 : position
       let percentage = range <= 0.0001 ? 1 : position / range
-      let final = percentage * (unit * 2) + unit
-      final = final > unit * 3 ? unit * 3 : final
+      let final = percentage * (unit * 8) + unit
+      final = final > unit * 9 ? unit * 9 : final
       if (this.needle()) {
         this.needle().style.left = `${final}px`
       }
