@@ -190,28 +190,9 @@ class Tuner {
     const marker = document.createElement('div')
 
     guage.id = 'guage'
-    guage.style.height = '50px'
-    guage.style.width = '50%'
-    guage.style.position = 'fixed'
-    guage.style.bottom = '25%'
-    guage.style.left = '25%'
-    guage.style.backgroundColor = 'rgb(0, 100, 200)'
-
     needle.id = 'needle'
-    needle.style.height = '50px'
-    needle.style.width = '20px'
-    needle.style.position = 'fixed'
-    needle.style.bottom = '25%'
-    needle.style.left = '25%'
-    needle.style.backgroundColor = 'rgb(0, 200, 100)'
-
     marker.id = 'marker'
-    marker.style.height = '50px'
-    marker.style.width = '10px'
-    marker.style.position = 'fixed'
-    marker.style.bottom = '25%'
-    marker.style.left = '50%'
-    marker.style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
+
     guage.append(needle, marker)
     layout.content().appendChild(guage)
     return this
@@ -256,7 +237,7 @@ class Tuner {
     }
     this._matchNotesInterval = setInterval(() => {
       if (this.matchNotes(notes) && this.noteH1()) {
-        this.noteH1().style.color = 'rgb(0, 200, 100)'
+        this.noteH1().style.color = 'lightseagreen'
       } else if (this.noteH1()) {
         this.noteH1().style.color = 'black'
       }
