@@ -16,9 +16,20 @@ class Client {
       .catch((error) => console.error(error))
   }
 
-  fetchData = (route) => {
+  fetchData(route) {
     return fetch(this.baseURL + route, {
       headers: { Accept: 'application/json' }
+    })
+      .then((response) => response.json())
+      .catch((error) => console.error(error))
+  }
+
+  deleteData(route) {
+    return fetch(this.baseURL + route, {
+      headers: {
+        Accept: 'application/json'
+      },
+      method: 'DELETE'
     })
       .then((response) => response.json())
       .catch((error) => console.error(error))
@@ -31,8 +42,12 @@ class Client {
     return this.fetchData(`instruments${filter ? filter : ''}`)
   }
 
-  sendInstrument = (instrument) => {
+  sendInstrument(instrument) {
     return this.sendData('instruments', instrument.toObject())
+  }
+
+  deleteInstrument(id) {
+    return this.deleteData(`instruments/${id}`)
   }
 
   getTuning(id) {
