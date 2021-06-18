@@ -55,7 +55,7 @@ button {
   min-width: 320px;
 }
 
-#tuning-form select {
+#tuning-form select, #delete-instrument-form select {
   margin-bottom: 20px !important;
 }
 
@@ -121,11 +121,11 @@ button {
   bottom: 95px;
 }
 
-#new-instrument-form, #new-tuning-form {
+#new-instrument-form, #new-tuning-form, #delete-instrument-form {
   margin: 20px;
 }
 
-#new-tuning-form-title {
+#new-tuning-form-title, #delete-instrument-form-title {
   width: 8em;
 }
 
