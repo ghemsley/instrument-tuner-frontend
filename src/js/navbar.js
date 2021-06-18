@@ -97,7 +97,16 @@ class Navbar {
               onClick: Forms.createNewTuningForm.bind(
                 Forms,
                 layout.content(),
-                layout, 
+                layout,
+                client
+              )
+            },
+            {
+              name: 'Remove an instrument',
+              onClick: Forms.deleteInstrumentForm.bind(
+                Forms,
+                layout.content(),
+                layout,
                 client
               )
             }
