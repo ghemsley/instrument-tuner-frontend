@@ -13,7 +13,8 @@ class Layout {
     this.tuningNotesH4 = () => document.getElementById('tuning-notes')
     this.instrumentNameH1 = () => document.getElementById('instrument-name')
     this.instrumentImg = () => document.getElementById('instrument-image')
-    this.unsplashAttributionP = () => document.getElementById('unsplash-attribution')
+    this.unsplashAttributionP = () =>
+      document.getElementById('unsplash-attribution')
     this.guage = () => document.getElementById('guage')
     this.needle = () => document.getElementById('needle')
     this.marker = () => document.getElementById('marker')
@@ -50,6 +51,15 @@ class Layout {
       document.getElementById('new-tuning-form-submit')
     this.newTuningFormAddTuningButton = () =>
       document.getElementById('new-tuning-form-add-tuning-button')
+    this.deleteInstrumentForm = () =>
+      document.getElementById('delete-instrument-form')
+    this.deleteInstrumentFormH1 = () =>
+      document.getElementById('delete-instrument-form-title')
+    this.deleteInstrumentFormSelect = () =>
+      document.getElementById('delete-instrument-form-select')
+    this.deleteInstrumentFormSubmit = () =>
+      document.getElementById('delete-instrument-form-submit')
+
     this.childElementFunctions = [
       this.noteH1,
       this.freqH2,
@@ -77,7 +87,11 @@ class Layout {
       this.newTuningFormNameInput,
       this.newTuningFormNotesInput,
       this.newTuningFormSubmit,
-      this.newTuningFormAddTuningButton
+      this.newTuningFormAddTuningButton,
+      this.deleteInstrumentForm,
+      this.deleteInstrumentFormH1,
+      this.deleteInstrumentFormSelect,
+      this.deleteInstrumentFormSubmit
     ]
     this.client = client
     this.tuner = tuner
