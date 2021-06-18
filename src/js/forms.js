@@ -53,6 +53,51 @@ class Forms {
     return newInstrumentForm
   }
 
+  static deleteInstrumentForm(parent, layout, client) {
+    client.getInstruments().then((instrumentsJSON) => {
+      for (const child of parent.childNodes) {
+        child.remove()
+      }
+      layout.clear()
+      const options = []
+      for (const instrument of instrumentsJSON.data) {
+        const option = document.createElement('option')
+        option.value = instrument.id
+        option.text = instrument.attributes.name
+        options.push(option)
+      }
+      const deleteInstrumentForm = document.createElement('form')
+      const deleteInstrumentFormH1 = document.createElement('h1')
+      const deleteInstrumentFormSelect = document.createElement('select')
+      const deleteInstrumentFormSubmit = document.createElement('input')
+
+      deleteInstrumentForm.id = 'delete-instrument-form'
+      deleteInstrumentFormH1.id = 'delete-instrument-form-title'
+      deleteInstrumentFormSelect.id = 'delete-instrument-form-select'
+      deleteInstrumentFormSubmit.id = 'delete-instrument-form-submit'
+
+      deleteInstrumentForm.classList.add('pure-form', 'pure-form-stacked')
+      deleteInstrumentFormH1.textContent = 'Remove an instrument'
+      deleteInstrumentFormSubmit.type = 'submit'
+
+      for (const option of options) {
+        deleteInstrumentFormSelect.appendChild(option)
+      }
+
+      deleteInstrumentForm.addEventListener(
+        'submit',
+        Forms.handleDeleteInstrumentFormSubmit.bind(Forms, client)
+      )
+      deleteInstrumentForm.append(
+        deleteInstrumentFormH1,
+        deleteInstrumentFormSelect,
+        deleteInstrumentFormSubmit
+      )
+      parent.appendChild(deleteInstrumentForm)
+      return deleteInstrumentForm
+    })
+  }
+
   static showTuningForm(instrument, tuner, parent, layout, interval) {
     const tuningForm = document.createElement('form')
     const tuningFormSelect = document.createElement('select')
@@ -261,6 +306,24 @@ class Forms {
       tuner.displayAtInterval(parent, interval)
       tuner.highlightMatchingNotes(tuning.notes, interval)
       tuner.drawGuage(layout, interval)
+    }
+  }
+
+  static handleDeleteInstrumentFormSubmit(client) {
+    event.preventDefault()
+    let instrumentID = 0
+    for (const child of event.target.children) {
+      if (child.id === 'delete-instrument-form-select') {
+        instrumentID = child.value
+      }
+    }
+    try {
+      client.deleteInstrument(instrumentID).then((json) => {
+        location.reload()
+        console.log(json)
+      })
+    } catch (e) {
+      console.error(`Error deleting instrument: ${e}`)
     }
   }
 }
