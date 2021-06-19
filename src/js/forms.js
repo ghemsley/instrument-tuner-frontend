@@ -249,8 +249,11 @@ class Forms {
     try {
       const instrument = new Instrument(name, null, null, null, tunings)
       client.sendInstrument(instrument).then((json) => {
-        location.reload()
-        console.log(json)
+        if (json.status && json.status == 'error') {
+          console.log(json)
+        } else {
+          location.reload()
+        }
       })
     } catch (e) {
       console.error(`Error creating or sending instrument: ${e}`)
@@ -277,8 +280,11 @@ class Forms {
     }
     try {
       client.sendTunings(tunings, instrumentID).then((json) => {
-        location.reload()
-        console.log(json)
+        if (json.status && json.status == 'error') {
+          console.log(json)
+        } else {
+          location.reload()
+        }
       })
     } catch (e) {
       console.error(`Error creating or sending tunings: ${e}`)
@@ -319,8 +325,11 @@ class Forms {
     }
     try {
       client.deleteInstrument(instrumentID).then((json) => {
-        location.reload()
-        console.log(json)
+        if (json.status && json.status == 'error') {
+          console.log(json)
+        } else {
+          location.reload()
+        }
       })
     } catch (e) {
       console.error(`Error deleting instrument: ${e}`)
