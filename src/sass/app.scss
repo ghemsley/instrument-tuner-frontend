@@ -15,7 +15,7 @@ body {
 #navbar,
 #content {
   border-radius: 4px;
-  background-color: rgba(0.75, 0.75, 0.75, 0.05);
+  background-color: rgb(240, 240, 240);
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.15);
 }
 
@@ -55,7 +55,8 @@ button {
   min-width: 320px;
 }
 
-#tuning-form select, #delete-instrument-form select {
+#tuning-form select,
+#delete-instrument-form select {
   margin-bottom: 20px !important;
 }
 
@@ -94,16 +95,11 @@ button {
 #note,
 #freq {
   position: fixed;
+  left: 46%;
 }
 
 #note {
-  left: 47.5%;
-  bottom: 120px;
-}
-
-#freq {
-  left: 47.5%;
-  bottom: 95px;
+  bottom: 135px;
 }
 
 #tuning-name,
@@ -112,20 +108,28 @@ button {
   left: 10%;
 }
 
-#tuning-name {
-  bottom: 120px;
-}
-
 #tuning-notes {
   color: lightseagreen;
+}
+
+#tuning-name {
+  bottom: 140px;
+}
+
+
+#freq,
+#tuning-notes {
   bottom: 95px;
 }
 
-#new-instrument-form, #new-tuning-form, #delete-instrument-form {
+#new-instrument-form,
+#new-tuning-form,
+#delete-instrument-form {
   margin: 20px;
 }
 
-#new-tuning-form-title, #delete-instrument-form-title {
+#new-tuning-form-title,
+#delete-instrument-form-title {
   width: 8em;
 }
 
@@ -134,4 +138,44 @@ button {
   margin-top: -20px;
   margin-bottom: 0px;
   top: -20px;
+}
+
+#tuning-notes,
+#freq {
+  background-color: rgb(240, 240, 240);
+  border-radius: 4px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+#tuning-notes {
+  padding: 40px 20px 20px 20px;
+}
+
+#freq {
+  padding: 45px 20px 10px 20px;
+}
+
+#tuning-name,
+#note {
+  margin-left: 20px;
+}
+
+
+#tuning-name, #note {
+  z-index: 1;
+}
+
+#error {
+  position: fixed;
+  width: 100vw;
+  top: 0px;
+  text-align: center;
+  background-color: rgba(255, 20, 0, 0.75);
+  padding: 20px;
+  border-radius: 4px;
+  button {
+    margin: 10px;
+  }
 }
