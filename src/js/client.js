@@ -1,3 +1,5 @@
+import ErrorModal from './errorModal'
+
 class Client {
   constructor(baseURL) {
     this.baseURL = baseURL || 'http://localhost:3000/'
@@ -13,7 +15,18 @@ class Client {
       body: JSON.stringify(object)
     })
       .then((response) => response.json())
-      .catch((error) => console.error(error))
+      .then((json) => {
+        if (json.status && json.status == 'error') {
+          const errorModal = new ErrorModal(json.message, 5000)
+          errorModal.display()
+          return json
+        } else {
+          return json
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
   }
 
   fetchData(route) {
@@ -21,7 +34,18 @@ class Client {
       headers: { Accept: 'application/json' }
     })
       .then((response) => response.json())
-      .catch((error) => console.error(error))
+      .then((json) => {
+        if (json.status && json.status == 'error') {
+          const errorModal = new ErrorModal(json.message, 5000)
+          errorModal.display()
+          return json
+        } else {
+          return json
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
   }
 
   deleteData(route) {
@@ -32,7 +56,18 @@ class Client {
       method: 'DELETE'
     })
       .then((response) => response.json())
-      .catch((error) => console.error(error))
+      .then((json) => {
+        if (json.status && json.status == 'error') {
+          const errorModal = new ErrorModal(json.message, 5000)
+          errorModal.display()
+          return json
+        } else {
+          return json
+        }
+      })
+      .catch((error) => {
+        console.error(error)
+      })
   }
 
   getInstrument(id) {
