@@ -1,4 +1,4 @@
-import ErrorModal from './errorModal'
+import ErrorModal from '../components/errorModal'
 
 class Client {
   constructor(baseURL) {
@@ -93,9 +93,15 @@ class Client {
   }
 
   sendTunings(tunings, instrumentID) {
-    let tuningsJSON = tunings.map((tuning) => tuning.toObject())
-    let finalObject = { instrumentID: instrumentID, tunings: tuningsJSON }
-    return this.sendData('tunings', finalObject)
+    try {
+      let tuningsJSON = tunings.map((tuning) => tuning.toObject())
+      let finalObject = { instrumentID: instrumentID, tunings: tuningsJSON }
+      return this.sendData('tunings', finalObject)
+    } catch (e) {
+      console.error(e)
+      const errorModal = new ErrorModal(e, 5000)
+      errorModal.display()
+    }
   }
 }
 

@@ -109,7 +109,14 @@ class Navbar {
                 layout,
                 client
               )
-            }
+            },
+            {
+              name: 'Instructions',
+              onClick: layout.createHowToStuff.bind(
+                layout,
+                layout.content()
+              )
+            },
           )
           const navbar = new Navbar('Instrument tuner', sections)
           navbar.appendToParent(parent, layout)

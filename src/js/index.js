@@ -1,6 +1,6 @@
-import Client from './client'
-import Tuner from './tuner'
-import Layout from './layout'
+import Client from './services/client'
+import Tuner from './components/tuner'
+import Layout from './components/layout'
 import '../sass/app.scss'
 
 document.addEventListener('DOMContentLoaded', (event) => {

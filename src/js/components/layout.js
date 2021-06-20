@@ -6,6 +6,12 @@ class Layout {
     this.container = () => document.getElementById('container')
     this.navbar = () => document.getElementById('navbar')
     this.content = () => document.getElementById('content')
+    // howto stuff
+    this.howToDiv = () => document.getElementById('how-to-container')
+    this.howToUl = () => document.getElementById('how-to-list')
+    this.selectOrCreateImg = () => document.getElementById('select-or-create-image')
+    this.newInstrumentImg = () => document.getElementById('new-instrument-image')
+    this.tuneImg = () => document.getElementById('tune-image')
     // tuning display
     this.noteH1 = () => document.getElementById('note')
     this.freqH2 = () => document.getElementById('freq')
@@ -51,6 +57,7 @@ class Layout {
       document.getElementById('new-tuning-form-submit')
     this.newTuningFormAddTuningButton = () =>
       document.getElementById('new-tuning-form-add-tuning-button')
+    // delete instrument form
     this.deleteInstrumentForm = () =>
       document.getElementById('delete-instrument-form')
     this.deleteInstrumentFormH1 = () =>
@@ -61,6 +68,11 @@ class Layout {
       document.getElementById('delete-instrument-form-submit')
 
     this.childElementFunctions = [
+      this.howToDiv,
+      this.howToUl,
+      this.selectOrCreateImg,
+      this.newInstrumentImg,
+      this.tuneImg,
       this.noteH1,
       this.freqH2,
       this.tuningNameH3,
@@ -151,6 +163,48 @@ class Layout {
         reject(`Error creating content div: ${e}`)
       }
     })
+  }
+
+  createHowToStuff(parent) {
+    this.clear()
+    const howToDiv = document.createElement('div')
+    const howToUl = document.createElement('ul')
+    const selectOrCreateLi = document.createElement('li')
+    const selectOrCreateImg = document.createElement('img')
+    const howToInnerDiv = document.createElement('div')
+    const newInstrumentImg = document.createElement('img')
+    const tuneImg = document.createElement('img')
+
+    howToDiv.id = 'how-to-container'
+    howToUl.id = 'how-to-list'
+    selectOrCreateLi.id = 'select-or-create-item'
+    selectOrCreateImg.id = 'select-or-create-image'
+    howToInnerDiv.id = 'how-to-list-div'
+    newInstrumentImg.id = 'new-instrument-image'
+    tuneImg.id = 'tune-image'
+
+    howToDiv.classList.add('pure-g')
+    howToUl.classList.add('pure-u-1')
+
+    selectOrCreateImg.src = './assets/select-or-create.png'
+    newInstrumentImg.src = './assets/new-instrument-form.png'
+    tuneImg.src = './assets/tune.png'
+
+    selectOrCreateLi.appendChild(selectOrCreateImg)
+
+    howToUl.appendChild(selectOrCreateLi)
+
+    for (const image of [newInstrumentImg, tuneImg]) {
+      const li = document.createElement('li')
+      li.appendChild(image)
+      howToInnerDiv.appendChild(li)
+    }
+
+    howToUl.appendChild(howToInnerDiv)
+
+    howToDiv.appendChild(howToUl)
+    parent.appendChild(howToDiv)
+    return howToDiv
   }
 
   clear() {
