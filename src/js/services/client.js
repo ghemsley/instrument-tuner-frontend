@@ -19,10 +19,8 @@ class Client {
         if (json.status && json.status == 'error') {
           const errorModal = new ErrorModal(json.message, 5000)
           errorModal.display()
-          return json
-        } else {
-          return json
         }
+        return json
       })
       .catch((error) => {
         console.error(error)
@@ -38,10 +36,8 @@ class Client {
         if (json.status && json.status == 'error') {
           const errorModal = new ErrorModal(json.message, 5000)
           errorModal.display()
-          return json
-        } else {
-          return json
         }
+        return json
       })
       .catch((error) => {
         console.error(error)
@@ -60,10 +56,8 @@ class Client {
         if (json.status && json.status == 'error') {
           const errorModal = new ErrorModal(json.message, 5000)
           errorModal.display()
-          return json
-        } else {
-          return json
         }
+        return json
       })
       .catch((error) => {
         console.error(error)
