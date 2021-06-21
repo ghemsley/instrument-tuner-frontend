@@ -28,6 +28,11 @@ Afterwards, the page will refresh and you can navigate to the instrument page yo
 
 When the tuner is activated, it will ask for permission to use an audio input device. Make sure you accept that request and choose an input device that has the least static and background noise. If the tuner doesn't seem to be working right, try to reduce background noise or increase the volume of your input device in your sound control panel.
 
+The tuner will display the current tuning's notes in the lower left corner, as well as the current detected note.
+When the current detected note matches one of the notes in your instrument's active tuning, it will be highlighted in green to let you know you are close to being in tune.
+
+To further hone in on the correct pitch, watch the little bar at the bottom of the screen. When the current note is highlighted and the green marker is in the middle of the tuning bar, you should be in correct tune for that note.
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/ghemsley/
