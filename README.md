@@ -35,7 +35,7 @@ To further hone in on the correct pitch, watch the little bar at the bottom of t
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/ghemsley/
+Bug reports and pull requests are welcome on GitHub at https://github.com/ghemsley/instrument-tuner-frontend
 
 ## License
 
