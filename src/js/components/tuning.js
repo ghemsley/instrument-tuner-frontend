@@ -1,11 +1,23 @@
 class Tuning {
-  constructor(name, notes = []) {
+  constructor(name, notes = [], id = null, instrument = null) {
     this.name = name
     this.notes = notes
+    this.id = id
+    this.instrument = instrument
+    this.instrumentID =
+      this.instrument && this.instrument.id ? this.instrument.id : null
+    Tuning.all.push(this)
   }
 
+  static all = []
+
   toObject() {
-    return { name: this.name, notes: this.notes }
+    return {
+      name: this.name,
+      notes: this.notes,
+      id: this.id,
+      instrumentID: this.instrumentID
+    }
   }
 
   display(layout) {
@@ -26,6 +38,18 @@ class Tuning {
       layout.content().appendChild(h4)
     }
     return this
+  }
+
+  static findOrCreateTuningsFromJson(tuningsJSON, instrument) {
+    return tuningsJSON.data.map(
+      (tuning) =>
+        new Tuning(
+          tuning.attributes.name,
+          tuning.attributes.notes,
+          tuning.id,
+          instrument
+        )
+    )
   }
 }
 
