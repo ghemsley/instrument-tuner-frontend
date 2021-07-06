@@ -2,26 +2,16 @@ import Tuning from './tuning'
 import Forms from './forms'
 
 class Instrument {
-  constructor(name, imageLink, imageArtist, imageArtistLink, tunings = []) {
+  constructor(name, imageLink, imageArtist, imageArtistLink, id = null) {
     this.name = name
     this.imageLink = imageLink
     this.imageArtist = imageArtist
     this.imageArtistLink = imageArtistLink
-    this.tunings = tunings
+    this.id = id
+    Instrument.all.push(this)
   }
 
-  createTuning(name, notes = []) {
-    const tuning = new Tuning(name, notes)
-    this.tunings.push(tuning)
-  }
-
-  getTuning(name) {
-    for (const tuning of this.tunings) {
-      if (tuning.name.toLowerCase() === name.toLowerCase()) {
-        return tuning
-      }
-    }
-  }
+  static all = []
 
   toObject() {
     return {
@@ -29,7 +19,12 @@ class Instrument {
       imageLink: this.imageLink,
       imageArtist: this.imageArtist,
       imageArtistLink: this.imageArtistLink,
-      tunings: this.tunings.map((tuning) => tuning.toObject())
+      id: this.id,
+      tunings: Tuning.all.map((tuning) => {
+        if (tuning.instrument === this) {
+          return tuning.toObject()
+        }
+      })
     }
   }
 
@@ -37,16 +32,7 @@ class Instrument {
     for (const child of parent.childNodes) {
       child.remove()
     }
-    for (const func of layout.childElementFunctions) {
-      if (func()) {
-        func().remove()
-      }
-    }
-    try {
-      tuner.stop()
-    } catch (error) {
-      console.log(error)
-    }
+    layout.clearContent()
     const h1 = layout.instrumentNameH1()
       ? layout.instrumentNameH1()
       : document.createElement('h1')
@@ -81,34 +67,30 @@ class Instrument {
     return this
   }
 
-  static createInstrumentFromJSON = (instrumentJSON, tuningsJSON) => {
+  static findOrCreateInstrumentFromJSON = (instrumentJSON) => {
+    for (const instrument of Instrument.all) {
+      if (instrument.id == instrumentJSON.id) {
+        return instrument
+      }
+    }
     const name = instrumentJSON.attributes.name
     const imageLink = instrumentJSON.attributes.image_link
     const imageArtist = instrumentJSON.attributes.image_artist
     const imageArtistLink = instrumentJSON.attributes.image_artist_link
-    const tunings = tuningsJSON.data.map(
-      (tuning) => new Tuning(tuning.attributes.name, tuning.attributes.notes)
-    )
+    const id = instrumentJSON.id
     return new Instrument(
       name,
       imageLink,
       imageArtist,
       imageArtistLink,
-      tunings
+      id
     )
   }
 
-  static async createInstrumentsFromJSON(instrumentsJSON, client) {
-    const instruments = []
-    for (const instrumentJSON of instrumentsJSON.data) {
-      const tuningsJSON = await client.getTunings(
-        `?filter[instrument_id_eq]=${instrumentJSON.id}`
-      )
-      instruments.push(
-        Instrument.createInstrumentFromJSON(instrumentJSON, tuningsJSON)
-      )
-    }
-    return instruments
+  static async findOrCreateInstrumentsFromJSON(instrumentsJSON) {
+    return instrumentsJSON.data.map((instrumentJSON) =>
+      Instrument.findOrCreateInstrumentFromJSON(instrumentJSON)
+    )
   }
 }
 
