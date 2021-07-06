@@ -1,14 +1,11 @@
 import Forms from './forms'
 import Instrument from './instrument'
+import Tuning from './tuning'
 
 class Navbar {
   constructor(title, sections = []) {
     this.title = title
     this.sections = sections
-  }
-
-  addSection(sectionObject) {
-    this.sections.push(sectionObject)
   }
 
   appendToParent(parent, layout) {
@@ -65,10 +62,56 @@ class Navbar {
     }
   }
 
-  static createFromData = (parent, layout, client, tuner, interval) => {
-    return client.getInstruments().then((instrumentJSON) => {
-      Instrument.createInstrumentsFromJSON(instrumentJSON, client).then(
+  static addInstrumentSection(instrument, layout, tuner, interval) {
+    const section = {
+      name: instrument.name,
+      onClick: instrument.display.bind(
+        instrument,
+        layout.content(),
+        layout,
+        tuner,
+        interval
+      )
+    }
+    const idString = section.name.toLowerCase().split(' ').join('-')
+    const item = document.createElement('li')
+    const link = document.createElement('a')
+    const p = document.createElement('p')
+
+    item.id = `navbar-${idString}-item`
+    link.id = `navbar-${idString}-link`
+    p.id = `navbar-${idString}-text`
+
+    item.classList.add('pure-menu-item')
+    link.classList.add('pure-menu-link')
+    p.textContent = section.name
+
+    link.appendChild(p)
+    link.href = '#'
+    link.addEventListener('click', section.onClick)
+    item.appendChild(link)
+
+    document
+      .getElementById('navbar')
+      .insertBefore(item, document.getElementById('navbar-new-instrument-item'))
+  }
+
+  static createFromData = (parent, layout, client, tuner, interval) =>
+    client.getInstruments().then((instrumentJSON) =>
+      Instrument.findOrCreateInstrumentsFromJSON(instrumentJSON).then(
         (instruments) => {
+          instrumentJSON.included.forEach((tuningJSON) => {
+            new Tuning(
+              tuningJSON.attributes.name,
+              tuningJSON.attributes.notes,
+              tuningJSON.id,
+              instruments.find(
+                (instrumentObject) =>
+                  instrumentObject.id ===
+                  tuningJSON.relationships.instrument.data.id
+              )
+            )
+          })
           const sections = []
           for (const instrument of instruments) {
             sections.push({
@@ -77,7 +120,7 @@ class Navbar {
                 instrument,
                 layout.content(),
                 layout,
-                tuner, 
+                tuner,
                 interval
               )
             })
@@ -89,7 +132,8 @@ class Navbar {
                 Forms,
                 layout.content(),
                 layout,
-                client
+                client,
+                tuner
               )
             },
             {
@@ -112,19 +156,15 @@ class Navbar {
             },
             {
               name: 'Instructions',
-              onClick: layout.createHowToStuff.bind(
-                layout,
-                layout.content()
-              )
-            },
+              onClick: layout.createHowToStuff.bind(layout, layout.content())
+            }
           )
-          const navbar = new Navbar('Instrument tuner', sections)
+          const navbar = new Navbar('Instrument Tuner', sections)
           navbar.appendToParent(parent, layout)
           return navbar
         }
       )
-    })
-  }
+    )
 }
 
 export default Navbar
