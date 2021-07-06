@@ -1,12 +1,13 @@
 import Instrument from './instrument'
+import Navbar from './navbar'
 import Tuning from './tuning'
 
 class Forms {
-  static createNewInstrumentForm(parent, layout, client) {
+  static createNewInstrumentForm(parent, layout, client, tuner) {
     for (const child of parent.childNodes) {
       child.remove()
     }
-    layout.clear()
+    layout.clearContent()
     const newInstrumentForm = document.createElement('form')
     const newInstrumentFormH1 = document.createElement('h1')
     const newInstrumentFormNameInput = document.createElement('input')
@@ -40,7 +41,7 @@ class Forms {
     )
     newInstrumentForm.addEventListener(
       'submit',
-      Forms.handleNewInstrumentFormSubmit.bind(Forms, client)
+      Forms.handleNewInstrumentFormSubmit.bind(Forms, client, layout, tuner)
     )
     newInstrumentForm.append(
       newInstrumentFormH1,
@@ -54,48 +55,46 @@ class Forms {
   }
 
   static deleteInstrumentForm(parent, layout, client) {
-    client.getInstruments().then((instrumentsJSON) => {
-      for (const child of parent.childNodes) {
-        child.remove()
-      }
-      layout.clear()
-      const options = []
-      for (const instrument of instrumentsJSON.data) {
-        const option = document.createElement('option')
-        option.value = instrument.id
-        option.text = instrument.attributes.name
-        options.push(option)
-      }
-      const deleteInstrumentForm = document.createElement('form')
-      const deleteInstrumentFormH1 = document.createElement('h1')
-      const deleteInstrumentFormSelect = document.createElement('select')
-      const deleteInstrumentFormSubmit = document.createElement('input')
+    for (const child of parent.childNodes) {
+      child.remove()
+    }
+    layout.clearContent()
+    const options = []
+    for (const instrument of Instrument.all) {
+      const option = document.createElement('option')
+      option.value = instrument.id
+      option.text = instrument.name
+      options.push(option)
+    }
+    const deleteInstrumentForm = document.createElement('form')
+    const deleteInstrumentFormH1 = document.createElement('h1')
+    const deleteInstrumentFormSelect = document.createElement('select')
+    const deleteInstrumentFormSubmit = document.createElement('input')
 
-      deleteInstrumentForm.id = 'delete-instrument-form'
-      deleteInstrumentFormH1.id = 'delete-instrument-form-title'
-      deleteInstrumentFormSelect.id = 'delete-instrument-form-select'
-      deleteInstrumentFormSubmit.id = 'delete-instrument-form-submit'
+    deleteInstrumentForm.id = 'delete-instrument-form'
+    deleteInstrumentFormH1.id = 'delete-instrument-form-title'
+    deleteInstrumentFormSelect.id = 'delete-instrument-form-select'
+    deleteInstrumentFormSubmit.id = 'delete-instrument-form-submit'
 
-      deleteInstrumentForm.classList.add('pure-form', 'pure-form-stacked')
-      deleteInstrumentFormH1.textContent = 'Remove an instrument'
-      deleteInstrumentFormSubmit.type = 'submit'
+    deleteInstrumentForm.classList.add('pure-form', 'pure-form-stacked')
+    deleteInstrumentFormH1.textContent = 'Remove an instrument'
+    deleteInstrumentFormSubmit.type = 'submit'
 
-      for (const option of options) {
-        deleteInstrumentFormSelect.appendChild(option)
-      }
+    for (const option of options) {
+      deleteInstrumentFormSelect.appendChild(option)
+    }
 
-      deleteInstrumentForm.addEventListener(
-        'submit',
-        Forms.handleDeleteInstrumentFormSubmit.bind(Forms, client)
-      )
-      deleteInstrumentForm.append(
-        deleteInstrumentFormH1,
-        deleteInstrumentFormSelect,
-        deleteInstrumentFormSubmit
-      )
-      parent.appendChild(deleteInstrumentForm)
-      return deleteInstrumentForm
-    })
+    deleteInstrumentForm.addEventListener(
+      'submit',
+      Forms.handleDeleteInstrumentFormSubmit.bind(Forms, client, layout)
+    )
+    deleteInstrumentForm.append(
+      deleteInstrumentFormH1,
+      deleteInstrumentFormSelect,
+      deleteInstrumentFormSubmit
+    )
+    parent.appendChild(deleteInstrumentForm)
+    return deleteInstrumentForm
   }
 
   static showTuningForm(instrument, tuner, parent, layout, interval) {
@@ -113,19 +112,35 @@ class Forms {
 
     tuningFormSelect.addEventListener(
       'change',
-      Forms.handleTuningChange.bind(Forms, tuner, layout, parent, interval)
+      Forms.handleTuningChange.bind(
+        Forms,
+        tuner,
+        layout,
+        parent,
+        interval,
+        instrument
+      )
     )
     tuningForm.addEventListener(
       'submit',
-      Forms.handleTuningChange.bind(Forms, tuner, layout, parent, interval)
+      Forms.handleTuningChange.bind(
+        Forms,
+        tuner,
+        layout,
+        parent,
+        interval,
+        instrument
+      )
     )
 
-    for (const tuning of instrument.tunings) {
-      const option = document.createElement('option')
-      const string = `${tuning.name}: ${tuning.notes.join(', ')}`
-      option.value = string
-      option.text = string
-      tuningFormSelect.appendChild(option)
+    for (const tuning of Tuning.all) {
+      if (tuning.instrument === instrument) {
+        const option = document.createElement('option')
+        const string = `${tuning.name}: ${tuning.notes.join(', ')}`
+        option.value = string
+        option.text = string
+        tuningFormSelect.appendChild(option)
+      }
     }
 
     tuningForm.append(tuningFormSelect, tuningFormSubmit)
@@ -138,63 +153,63 @@ class Forms {
   }
 
   static createNewTuningForm = (parent, layout, client) => {
-    client.getInstruments().then((instrumentsJSON) => {
-      for (const child of parent.childNodes) {
-        child.remove()
-      }
-      layout.clear()
-      const options = []
-      for (const instrument of instrumentsJSON.data) {
+    for (const child of parent.childNodes) {
+      child.remove()
+    }
+    layout.clearContent()
+    const options = []
+    for (const instrument of Instrument.all) {
+      if (instrument.id) {
         const option = document.createElement('option')
         option.value = instrument.id
-        option.text = instrument.attributes.name
+        option.text = instrument.name
         options.push(option)
       }
-      const newTuningForm = document.createElement('form')
-      const newTuningFormH1 = document.createElement('h1')
-      const newTuningFormInstrumentSelect = document.createElement('select')
-      const newTuningFormNameInput = document.createElement('input')
-      const newTuningFormNotesInput = document.createElement('input')
-      const newTuningFormSubmit = document.createElement('input')
-      const newTuningFormAddTuningButton = document.createElement('button')
+    }
+    const newTuningForm = document.createElement('form')
+    const newTuningFormH1 = document.createElement('h1')
+    const newTuningFormInstrumentSelect = document.createElement('select')
+    const newTuningFormNameInput = document.createElement('input')
+    const newTuningFormNotesInput = document.createElement('input')
+    const newTuningFormSubmit = document.createElement('input')
+    const newTuningFormAddTuningButton = document.createElement('button')
 
-      newTuningForm.id = 'new-tuning-form'
-      newTuningFormH1.id = 'new-tuning-form-title'
-      newTuningFormInstrumentSelect.id = 'new-tuning-form-instrument-select'
-      newTuningFormNameInput.id = 'new-tuning-form-name-input'
-      newTuningFormNotesInput.id = 'new-tuning-form-notes-input'
-      newTuningFormSubmit.id = 'new-tuning-form-submit'
-      newTuningFormAddTuningButton.id = 'new-tuning-form-add-tuning-button'
+    newTuningForm.id = 'new-tuning-form'
+    newTuningFormH1.id = 'new-tuning-form-title'
+    newTuningFormInstrumentSelect.id = 'new-tuning-form-instrument-select'
+    newTuningFormNameInput.id = 'new-tuning-form-name-input'
+    newTuningFormNotesInput.id = 'new-tuning-form-notes-input'
+    newTuningFormSubmit.id = 'new-tuning-form-submit'
+    newTuningFormAddTuningButton.id = 'new-tuning-form-add-tuning-button'
 
-      newTuningForm.classList.add('pure-form', 'pure-form-stacked')
-      newTuningFormH1.textContent = 'Add tuning to instrument'
-      newTuningFormNameInput.placeholder = 'Tuning name'
-      newTuningFormNotesInput.placeholder = 'Tuning notes (comma separated)'
-      newTuningFormSubmit.type = 'submit'
-      newTuningFormAddTuningButton.textContent = 'Add another tuning'
+    newTuningForm.classList.add('pure-form', 'pure-form-stacked')
+    newTuningFormH1.textContent = 'Add tuning to instrument'
+    newTuningFormNameInput.placeholder = 'Tuning name'
+    newTuningFormNotesInput.placeholder = 'Tuning notes (comma separated)'
+    newTuningFormSubmit.type = 'submit'
+    newTuningFormAddTuningButton.textContent = 'Add another tuning'
 
-      for (const option of options) {
-        newTuningFormInstrumentSelect.appendChild(option)
-      }
+    for (const option of options) {
+      newTuningFormInstrumentSelect.appendChild(option)
+    }
 
-      newTuningFormAddTuningButton.addEventListener(
-        'click',
-        Forms.handleAddTuningButtonClick.bind(Forms, newTuningForm, layout)
-      )
-      newTuningForm.addEventListener(
-        'submit',
-        Forms.handleNewTuningFormSubmit.bind(Forms, client)
-      )
-      newTuningForm.append(
-        newTuningFormH1,
-        newTuningFormInstrumentSelect,
-        newTuningFormNameInput,
-        newTuningFormNotesInput,
-        newTuningFormSubmit
-      )
-      parent.append(newTuningForm, newTuningFormAddTuningButton)
-      return newTuningForm
-    })
+    newTuningFormAddTuningButton.addEventListener(
+      'click',
+      Forms.handleAddTuningButtonClick.bind(Forms, newTuningForm, layout)
+    )
+    newTuningForm.addEventListener(
+      'submit',
+      Forms.handleNewTuningFormSubmit.bind(Forms, client, layout)
+    )
+    newTuningForm.append(
+      newTuningFormH1,
+      newTuningFormInstrumentSelect,
+      newTuningFormNameInput,
+      newTuningFormNotesInput,
+      newTuningFormSubmit
+    )
+    parent.append(newTuningForm, newTuningFormAddTuningButton)
+    return newTuningForm
   }
 
   static handleAddTuningButtonClick(form, layout) {
@@ -228,12 +243,11 @@ class Forms {
     form.append(tuningNameInput, tuningNotesInput, submit)
   }
 
-  static handleNewInstrumentFormSubmit(client) {
+  static handleNewInstrumentFormSubmit(client, layout, tuner) {
     event.preventDefault()
     let name
     const tuningNames = []
     const tuningNotes = []
-    const tunings = []
     for (const child of event.target.children) {
       if (child.id === 'new-instrument-form-name-input') {
         name = child.value
@@ -243,16 +257,41 @@ class Forms {
         tuningNotes.push(child.value)
       }
     }
-    for (let i = 0; i < tuningNames.length; i++) {
-      tunings.push(new Tuning(tuningNames[i], tuningNotes[i].split(', ')))
-    }
     try {
-      const instrument = new Instrument(name, null, null, null, tunings)
+      const instrument = new Instrument(name, null, null, null)
+      const tunings = []
+      for (let i = 0; i < tuningNames.length; i++) {
+        tunings.push(
+          new Tuning(
+            tuningNames[i],
+            tuningNotes[i].split(', '),
+            null,
+            instrument
+          )
+        )
+      }
       client.sendInstrument(instrument).then((json) => {
-        if (json.status && json.status == 'error') {
-          console.log(json)
+        console.log(json)
+        layout.clearContent()
+        if (json.data) {
+          instrument.id = json.data.id
+          instrument.imageLink = json.data.attributes.image_link
+          instrument.imageArtist = json.data.attributes.image_artist
+          instrument.imageArtistLink = json.data.attributes.image_artist_link
+          tunings.forEach((tuning) => {
+            tuning.instrument = instrument
+            tuning.instrumentID = instrument.id
+            const tuningJSON = json.included.find(
+              (includedTuning) => includedTuning.attributes.name === tuning.name
+            )
+            tuning.id = tuningJSON.id
+          })
+          Navbar.addInstrumentSection(instrument, layout, tuner, 16)
         } else {
-          location.reload()
+          console.log(Instrument.all.pop())
+          tunings.forEach((tuning) =>
+            Tuning.all.splice(Tuning.all.indexOf(tuning), 1)
+          )
         }
       })
     } catch (e) {
@@ -260,7 +299,7 @@ class Forms {
     }
   }
 
-  static handleNewTuningFormSubmit(client) {
+  static handleNewTuningFormSubmit(client, layout) {
     event.preventDefault()
     let instrumentID = 0
     const tuningNames = []
@@ -275,15 +314,31 @@ class Forms {
         tuningNotes.push(child.value)
       }
     }
+    const instrument = Instrument.all.find(
+      (instrumentObject) => instrumentObject.id === instrumentID
+    )
     for (let i = 0; i < tuningNames.length; i++) {
-      tunings.push(new Tuning(tuningNames[i], tuningNotes[i].split(', ')))
+      tunings.push(
+        new Tuning(tuningNames[i], tuningNotes[i].split(', '), null, instrument)
+      )
     }
     try {
       client.sendTunings(tunings, instrumentID).then((json) => {
-        if (json.status && json.status == 'error') {
-          console.log(json)
-        } else {
-          location.reload()
+        console.log(json)
+        layout.clearContent()
+        try {
+          json.data.forEach((tuningJSON) => {
+            const tuning = Tuning.all.find(
+              (tuningObject) =>
+                tuningObject.name === tuningJSON.attributes.name &&
+                tuningObject.instrument === instrument
+            )
+            tuning.id = tuningJSON.id
+          })
+        } catch (e) {
+          tunings.forEach((tuning) =>
+            Tuning.all.splice(Tuning.all.indexOf(tuning), 1)
+          )
         }
       })
     } catch (e) {
@@ -291,7 +346,7 @@ class Forms {
     }
   }
 
-  static handleTuningChange(tuner, layout, parent, interval) {
+  static handleTuningChange(tuner, layout, parent, interval, instrument) {
     event.preventDefault()
     let tuningPair
     if (event.target.value) {
@@ -299,7 +354,11 @@ class Forms {
     } else if (event.target.children[0].value) {
       tuningPair = event.target.children[0].value.split(': ')
     }
-    const tuning = new Tuning(tuningPair[0], tuningPair[1].split(', '))
+    const tuning = Tuning.all.find(
+      (tuningObject) =>
+        tuningObject.name === tuningPair[0] &&
+        tuningObject.instrument === instrument
+    )
     tuning.display(layout)
     if (tuner.started === false) {
       tuner.start()
@@ -315,7 +374,7 @@ class Forms {
     }
   }
 
-  static handleDeleteInstrumentFormSubmit(client) {
+  static handleDeleteInstrumentFormSubmit(client, layout) {
     event.preventDefault()
     let instrumentID = 0
     for (const child of event.target.children) {
@@ -325,11 +384,31 @@ class Forms {
     }
     try {
       client.deleteInstrument(instrumentID).then((json) => {
-        if (json.status && json.status == 'error') {
-          console.log(json)
-        } else {
-          location.reload()
-        }
+        console.log(json)
+        layout.clearContent()
+        const idString = json.data.attributes.name
+          .toLowerCase()
+          .split(' ')
+          .join('-')
+        const instrumentItem = document.getElementById(
+          `navbar-${idString}-item`
+        )
+        instrumentItem.remove()
+        Instrument.all.forEach((instrumentObject) => {
+          if ((instrumentObject.id === json.data.id)) {
+            const instrumentIndex = Instrument.all.indexOf(instrumentObject)
+            Instrument.all.splice(instrumentIndex, 1)
+            Tuning.all.forEach((tuning) => {
+              if (
+                tuning.instrumentID === instrumentObject.id ||
+                tuning.instrument === instrumentObject
+              ) {
+                const tuningIndex = Tuning.all.indexOf(tuning)
+                Tuning.all.splice(tuningIndex, 1)
+              }
+            })
+          }
+        })
       })
     } catch (e) {
       console.error(`Error deleting instrument: ${e}`)
