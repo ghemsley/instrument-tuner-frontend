@@ -5,12 +5,15 @@ class Layout {
     this.grid = () => document.getElementById('grid')
     this.container = () => document.getElementById('container')
     this.navbar = () => document.getElementById('navbar')
+    this.contentGrid = () => document.getElementById('content-grid')
     this.content = () => document.getElementById('content')
     // howto stuff
     this.howToDiv = () => document.getElementById('how-to-container')
     this.howToUl = () => document.getElementById('how-to-list')
-    this.selectOrCreateImg = () => document.getElementById('select-or-create-image')
-    this.newInstrumentImg = () => document.getElementById('new-instrument-image')
+    this.selectOrCreateImg = () =>
+      document.getElementById('select-or-create-image')
+    this.newInstrumentImg = () =>
+      document.getElementById('new-instrument-image')
     this.tuneImg = () => document.getElementById('tune-image')
     // tuning display
     this.noteH1 = () => document.getElementById('note')
@@ -66,6 +69,8 @@ class Layout {
       document.getElementById('delete-instrument-form-select')
     this.deleteInstrumentFormSubmit = () =>
       document.getElementById('delete-instrument-form-submit')
+    this.welcomeTextH2 = () => document.getElementById('welcome-text-h2')
+    this.welcomeTextP = () => document.getElementById('welcome-text-p')
 
     this.childElementFunctions = [
       this.howToDiv,
@@ -103,36 +108,45 @@ class Layout {
       this.deleteInstrumentForm,
       this.deleteInstrumentFormH1,
       this.deleteInstrumentFormSelect,
-      this.deleteInstrumentFormSubmit
+      this.deleteInstrumentFormSubmit,
+      this.welcomeTextH2,
+      this.welcomeTextP
     ]
     this.client = client
     this.tuner = tuner
   }
 
-  async create(parent, interval) {
-    await this.createContainer(parent)
-    await this.createNavbar(this.container(), interval)
-    await this.createContent(this.container())
+  create(parent, interval) {
+    this.createContainer(parent)
+    const content = this.createContent(this.container())
+    this.createNavbar(this.container(), interval).then((navbar) => {
+      const h2 = document.createElement('h2')
+      const p = document.createElement('p')
+      h2.id = 'welcome-text-h2'
+      p.id = 'welcome-text-p'
+      h2.textContent = `Welcome to ${navbar.title}!`
+      p.textContent = `This app lets you tune an instrument in a customizable way.\n
+      To get started, choose from an available instrument or create your own.\n
+      Try the Instructions page to see a basic visual guide on how to proceed.\n\n
+      Once you start the tuner, remember that you should be in tune if the desired note\n
+      is highlighted in green and the little green marker is in the middle of the tuner bar.\n\n
+      Have fun!`
+      content.append(h2, p)
+    })
   }
 
   createContainer(parent) {
-    return new Promise((resolve, reject) => {
-      try {
-        const grid = document.createElement('div')
-        const container = document.createElement('div')
+    const grid = document.createElement('div')
+    const container = document.createElement('div')
 
-        grid.id = 'grid'
-        container.id = 'container'
-        grid.classList.add('pure-g')
-        container.classList.add('pure-u-1-1')
+    grid.id = 'grid'
+    container.id = 'container'
+    grid.classList.add('pure-g')
+    container.classList.add('pure-u-1-1')
 
-        grid.appendChild(container)
-        parent.appendChild(grid)
-        resolve(container)
-      } catch (e) {
-        reject(`Error creating container: ${e}`)
-      }
-    })
+    grid.appendChild(container)
+    parent.appendChild(grid)
+    return container
   }
 
   createNavbar(parent, interval) {
@@ -146,27 +160,21 @@ class Layout {
   }
 
   createContent(parent) {
-    return new Promise((resolve, reject) => {
-      try {
-        const contentGrid = document.createElement('div')
-        const content = document.createElement('div')
+    const contentGrid = document.createElement('div')
+    const content = document.createElement('div')
 
-        contentGrid.id = 'content-grid'
-        content.id = 'content'
-        contentGrid.classList.add('pure-g')
-        content.classList.add('pure-u-1-1')
+    contentGrid.id = 'content-grid'
+    content.id = 'content'
+    contentGrid.classList.add('pure-g')
+    content.classList.add('pure-u-1-1')
 
-        contentGrid.appendChild(content)
-        parent.appendChild(contentGrid)
-        resolve(content)
-      } catch (e) {
-        reject(`Error creating content div: ${e}`)
-      }
-    })
+    contentGrid.appendChild(content)
+    parent.appendChild(contentGrid)
+    return content
   }
 
   createHowToStuff(parent) {
-    this.clear()
+    this.clearContent()
     const howToDiv = document.createElement('div')
     const howToUl = document.createElement('ul')
     const selectOrCreateLi = document.createElement('li')
@@ -207,10 +215,11 @@ class Layout {
     return howToDiv
   }
 
-  clear() {
+  clearContent() {
     for (const elementFunction of this.childElementFunctions) {
-      if (elementFunction()) {
-        elementFunction().remove()
+      const element = elementFunction()
+      if (element) {
+        element.remove()
       }
     }
     if (this.tuner.started) {
